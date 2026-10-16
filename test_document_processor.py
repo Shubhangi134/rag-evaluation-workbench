@@ -199,3 +199,36 @@ def test_search_chunks_semantic_returns_relevant_chunks():
         "Vehicle safety regulations",
         "Automobile braking safety requirements",
     }
+
+def test_precision_at_k_calculates_relevant_fraction():
+    from app.evaluator import precision_at_k
+
+    retrieved_ids = ["chunk1", "chunk2", "chunk3"]
+    relevant_ids = {"chunk1", "chunk3"}
+
+    result = precision_at_k(retrieved_ids, relevant_ids, k=3)
+
+    assert result == 2 / 3
+
+def test_recall_at_k_calculates_relevant_fraction():
+    from app.evaluator import recall_at_k
+
+    retrieved_ids = ["chunk1", "chunk2", "chunk3"]
+    relevant_ids = {"chunk1", "chunk3", "chunk4", "chunk5"}
+
+    result = recall_at_k(retrieved_ids, relevant_ids, k=3)
+
+    assert result == 2 / 4
+
+def test_evaluate_retrieval_returns_precision_and_recall():
+    from app.evaluator import evaluate_retrieval
+
+    retrieved_ids = ["chunk1", "chunk2", "chunk3"]
+    relevant_ids = {"chunk1", "chunk3", "chunk4"}
+
+    result = evaluate_retrieval(retrieved_ids, relevant_ids, k=3)
+
+    assert result == {
+        "precision_at_k": 2 / 3,
+        "recall_at_k": 2 / 3,
+    }

@@ -1,1 +1,11 @@
 # Python dependencies for the RAG Evaluation Workbench
+# Web backend
+fastapi
+uvicorn[standard]
+
+# Testing
+pytest
+httpx
+pypdf
+reportlab
+python-multipart

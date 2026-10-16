@@ -1,6 +1,6 @@
 from app.models import DocumentChunk
 from sklearn.feature_extraction.text import TfidfVectorizer
-
+from sentence_transformers import SentenceTransformer
 def search_chunks(
     query: str,
     chunks: list[DocumentChunk],
@@ -46,3 +46,25 @@ def search_chunks_tfidf(
         for i in ranked_indices[:top_k]
         if scores[i] > 0
     ]
+def search_chunks_semantic(
+    query: str,
+    chunks: list[DocumentChunk],
+    top_k: int = 3,
+) -> list[DocumentChunk]:
+    """Retrieve chunks using semantic similarity."""
+    if top_k <= 0 or not query.strip() or not chunks:
+        return []
+
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    texts = [chunk.text for chunk in chunks]
+    embeddings = model.encode(texts, normalize_embeddings=True)
+    query_embedding = model.encode(
+        [query],
+        normalize_embeddings=True,
+    )
+
+    scores = embeddings @ query_embedding[0]
+    ranked_indices = scores.argsort()[::-1]
+
+    return [chunks[i] for i in ranked_indices[:top_k]]

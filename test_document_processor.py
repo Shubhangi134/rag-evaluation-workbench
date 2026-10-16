@@ -177,3 +177,25 @@ def test_search_chunks_tfidf_returns_relevant_chunks():
     assert len(results) == 2
     assert results[0].text == "Vehicle safety regulations"
     assert results[1].text == "Vehicle braking safety requirements"
+
+def test_search_chunks_semantic_returns_relevant_chunks():
+    from app.models import DocumentChunk
+    from app.retriever import search_chunks_semantic
+
+    chunks = [
+        DocumentChunk("doc1", 0, "Vehicle safety regulations"),
+        DocumentChunk("doc1", 1, "Cooking recipes and ingredients"),
+        DocumentChunk("doc1", 2, "Automobile braking safety requirements"),
+    ]
+
+    results = search_chunks_semantic(
+        "car safety systems",
+        chunks,
+        top_k=2,
+    )
+
+    assert len(results) == 2
+    assert results[0].text in {
+        "Vehicle safety regulations",
+        "Automobile braking safety requirements",
+    }

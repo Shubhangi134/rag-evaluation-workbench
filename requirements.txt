@@ -11,3 +11,5 @@ reportlab
 python-multipart
 # Retrieval
 scikit-learn
+# Semantic retrieval
+sentence-transformers

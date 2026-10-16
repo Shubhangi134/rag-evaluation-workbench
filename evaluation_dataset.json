@@ -1,0 +1,10 @@
+[
+  {
+    "query": "What guidelines does this document propose for automated driving system vehicles?",
+    "relevant_chunk_ids": [
+      "ECE-TRANS:20",
+      "ECE-TRANS:21",
+      "ECE-TRANS:22"
+    ]
+  }
+]

@@ -43,6 +43,7 @@ def test_upload_document_returns_filename_and_content_type():
         "filename": "sample.pdf",
         "content_type": "application/pdf",
         "text_length": 0,
+        "chunk_count": 0,
         "text_preview": "",
     }
 def test_upload_document_rejects_non_pdf():

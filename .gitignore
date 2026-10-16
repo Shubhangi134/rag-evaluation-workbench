@@ -22,3 +22,8 @@ dist/
 .vscode/
 .DS_Store
 Thumbs.db
+# Runtime database
+rag_workbench.db
+
+# PDF files
+pdfs/*.pdf

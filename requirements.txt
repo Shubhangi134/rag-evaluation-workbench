@@ -9,3 +9,5 @@ httpx
 pypdf
 reportlab
 python-multipart
+# Retrieval
+scikit-learn

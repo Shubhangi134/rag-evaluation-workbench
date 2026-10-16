@@ -3,6 +3,7 @@ from app.document_processor import chunk_text
 from app.models import DocumentChunk
 from app.document_processor import create_document_chunks
 from app.document_processor import extract_text_from_pdf
+from app.retriever import search_chunks
 import pytest
 
 def test_clean_text_normalizes_whitespace():
@@ -145,3 +146,18 @@ def test_chunk_text_respects_size_and_overlap():
         "one two three",
         "four five six",
     ]
+def test_search_chunks_returns_best_keyword_match():
+    from app.models import DocumentChunk
+    from app.retriever import search_chunks
+
+    chunks = [
+        DocumentChunk("doc1", 0, "Vehicle safety regulations"),
+        DocumentChunk("doc1", 1, "Cooking recipes and ingredients"),
+        DocumentChunk("doc1", 2, "Vehicle braking safety requirements"),
+    ]
+
+    results = search_chunks("vehicle safety", chunks, top_k=2)
+
+    assert len(results) == 2
+    assert results[0].text == "Vehicle safety regulations"
+    assert results[1].text == "Vehicle braking safety requirements"

@@ -50,7 +50,7 @@ Evaluated on the BEIR SciFact test split using 300 queries and 5,183 scientific 
 
 ```bash
 git clone https://github.com/Shubhangi134/rag-evaluation-workbench.git
-cd "RAG Evaluation Workbench"
+cd rag-evaluation-workbench
 ```
 
 ### 2. Set up the Python environment

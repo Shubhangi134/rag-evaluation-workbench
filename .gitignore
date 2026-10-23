@@ -27,3 +27,5 @@ rag_workbench.db
 
 # PDF files
 pdfs/*.pdf
+datasets/
+frontend/dist/

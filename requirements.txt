@@ -13,3 +13,8 @@ python-multipart
 scikit-learn
 # Semantic retrieval
 sentence-transformers
+python-dotenv
+ollama
+openai
+beir
+requests

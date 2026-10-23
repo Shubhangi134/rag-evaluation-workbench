@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
 
 
 type RetrievalMethod = 'Keyword' | 'TF-IDF' | 'Semantic'
@@ -61,6 +63,9 @@ function App() {
     if (!currentQuestion || isAsking) return
 
     setIsAsking(true)
+    if (compareAll) {
+  await handleCompareAll(currentQuestion)
+}
     setQuestion('')
     setAskError('')
 
@@ -102,8 +107,8 @@ function App() {
       setIsAsking(false)
     }
   }
-const handleCompareAll = async () => {
-  const currentQuestion = question.trim()
+const handleCompareAll = async (query: string) => {
+  const currentQuestion = query.trim()
 
   if (!currentQuestion) {
     setAskError('Enter a question before comparing retrieval methods.')
@@ -228,13 +233,31 @@ const handleCompareAll = async () => {
                 setCompareAll(checked)
                 setBenchmarkResults(null)
 
-                if (checked) {
-                  void handleCompareAll()
+                if (!checked) {
+                  setBenchmarkResults(null)
                 }
               }}
             />
             <span>Compare all 3</span>
           </label>
+          {benchmarkResults && (
+  <details className="benchmark-results">
+    <summary>Retrieval Comparison Result</summary>
+
+    {Object.entries(benchmarkResults).map(([name, metrics]) => (
+      <div className="benchmark-result" key={name}>
+        <span className="benchmark-method">{name}</span>
+        <span>
+          Precision@3: {metrics.precision_at_k.toFixed(2)}
+        </span>
+        <span>
+          Recall@3: {metrics.recall_at_k.toFixed(2)}
+        </span>
+      </div>
+    ))}
+  </details>
+)}
+
         </div>
 
         <div className="sidebar-section">
@@ -334,8 +357,9 @@ const handleCompareAll = async () => {
                         <div className="chat-answer">
                           <span className="chat-role">Answer</span>
                           <div className="chat-answer-text">
-                              <ReactMarkdown>{assistantMessage.content}</ReactMarkdown>
-                            </div>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {assistantMessage.content}
+                          </ReactMarkdown>                            </div>
 
                           {assistantMessage.sources &&
                             assistantMessage.sources.length > 0 && (
@@ -373,19 +397,6 @@ const handleCompareAll = async () => {
               <p>{askError}</p>
             </div>
           )}
-            {benchmarkResults && (
-              <section className="benchmark-results">
-                <h3>Retrieval Comparison</h3>
-
-                {Object.entries(benchmarkResults).map(([name, metrics]) => (
-                  <div className="benchmark-result" key={name}>
-                    <strong>{name.toUpperCase()}</strong>
-                    <span>Precision@3: {metrics.precision_at_k.toFixed(2)}</span>
-                    <span>Recall@3: {metrics.recall_at_k.toFixed(2)}</span>
-                  </div>
-                ))}
-              </section>
-            )}
 
           <section className="question-section">
             <div className="question-heading">

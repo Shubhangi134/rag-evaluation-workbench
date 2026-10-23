@@ -1085,6 +1085,69 @@ textarea:focus-visible {
   max-width: 760px;
   overflow-wrap: anywhere;
 }
+.chat-answer-text p {
+  margin: 0 0 14px;
+}
+
+.chat-answer-text h1,
+.chat-answer-text h2,
+.chat-answer-text h3,
+.chat-answer-text h4 {
+  margin: 20px 0 10px;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.chat-answer-text ul,
+.chat-answer-text ol {
+  margin: 10px 0 16px;
+  padding-left: 26px;
+  text-align: left;
+}
+
+.chat-answer-text li {
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.chat-answer-text li p {
+  margin-bottom: 6px;
+}
+
+.chat-answer-text table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  text-align: left;
+  font-size: 14px;
+}
+
+.chat-answer-text th,
+.chat-answer-text td {
+  border: 1px solid #dcdced;
+  padding: 8px 10px;
+  vertical-align: top;
+}
+
+.chat-answer-text th {
+  font-weight: 600;
+  background: #f5f4ff;
+}
+
+.chat-answer-text pre {
+  overflow-x: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f4f4f8;
+  text-align: left;
+}
+
+.chat-answer-text blockquote {
+  margin: 12px 0;
+  padding-left: 14px;
+  border-left: 3px solid #c4b5fd;
+  text-align: left;
+}
 
 .chat-sources {
   margin-top: 10px;
@@ -1142,4 +1205,34 @@ textarea:focus-visible {
   justify-content: center;
   text-align: center;
 }
+.benchmark-results {
+  margin-top: 12px;
+  padding: 0 10px;
+  font-size: 12px;
+}
 
+.benchmark-results summary {
+  cursor: pointer;
+  list-style: disclosure-closed;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.benchmark-results[open] summary {
+  margin-bottom: 10px;
+}
+
+.benchmark-result {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  line-height: 1.4;
+}
+
+.benchmark-method {
+  font-weight: 600;
+  font-size: 12px;
+}

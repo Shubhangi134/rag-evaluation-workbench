@@ -15,7 +15,6 @@ def main():
         data_folder="datasets/scifact"
     ).load(split="test")
 
-    # Convert each SciFact document into one DocumentChunk.
     chunks = [
         DocumentChunk(
             document_id=doc_id,
@@ -31,12 +30,6 @@ def main():
         "Semantic": search_chunks_semantic,
     }
 
-    totals = {
-        name: {"precision": 0.0, "recall": 0.0, "queries": 0}
-        for name in strategies
-    }
-
-    # BEIR expects query IDs mapped to document IDs and ranking scores.
     results_by_strategy = {name: {} for name in strategies}
 
     for query_id, query_text in queries.items():
@@ -52,54 +45,41 @@ def main():
         for name, retrieve in strategies.items():
             retrieved = retrieve(query_text, chunks, top_k=5)
 
-            # Preserve original SciFact document IDs for BEIR.
             results_by_strategy[name][query_id] = {
                 chunk.document_id: 1.0 / rank
                 for rank, chunk in enumerate(retrieved, start=1)
             }
 
-            retrieved_doc_ids = [
-                chunk.document_id for chunk in retrieved
-            ]
+    evaluated_qrels = {
+        query_id: qrels[query_id]
+        for query_id in results_by_strategy["Keyword"]
+    }
 
-            hits = sum(
-                1
-                for doc_id in retrieved_doc_ids
-                if doc_id in relevant_doc_ids
-            )
-
-            totals[name]["precision"] += hits / 5
-            totals[name]["recall"] += (
-                hits / len(relevant_doc_ids)
-            )
-            totals[name]["queries"] += 1
-
-    # Calculate nDCG@5 using SciFact relevance judgments.
-    ndcg_results = {}
+    metrics_by_strategy = {}
 
     for name, results in results_by_strategy.items():
-        ndcg, _, _, _ = EvaluateRetrieval.evaluate(
-            qrels,
+        ndcg, _map, recall, precision = EvaluateRetrieval.evaluate(
+            evaluated_qrels,
             results,
             k_values=[5],
         )
-        ndcg_results[name] = ndcg.get("NDCG@5", 0.0)
+
+        metrics_by_strategy[name] = {
+            "precision": precision["P@5"],
+            "recall": recall["Recall@5"],
+            "ndcg": ndcg["NDCG@5"],
+        }
 
     print("\nSciFact Retrieval Evaluation (Top 5)")
     print("-" * 55)
 
-    for name, values in totals.items():
-        count = values["queries"]
-
-        if count == 0:
-            print(f"{name}: No queries evaluated")
-            continue
+    for name, metrics in metrics_by_strategy.items():
 
         print(f"\n{name}")
-        print(f"Queries evaluated: {count}")
-        print(f"Mean Precision@5: {values['precision'] / count:.4f}")
-        print(f"Mean Recall@5:    {values['recall'] / count:.4f}")
-        print(f"Mean nDCG@5:      {ndcg_results[name]:.4f}")
+        print(f"Queries evaluated: {len(results_by_strategy[name])}")
+        print(f"Mean Precision@5: {metrics['precision']:.4f}")
+        print(f"Mean Recall@5:    {metrics['recall']:.4f}")
+        print(f"Mean nDCG@5:      {metrics['ndcg']:.4f}")
 
 
 if __name__ == "__main__":

@@ -228,7 +228,9 @@ def test_evaluate_retrieval_returns_precision_and_recall():
 
     result = evaluate_retrieval(retrieved_ids, relevant_ids, k=3)
 
+    
     assert result == {
         "precision_at_k": 2 / 3,
         "recall_at_k": 2 / 3,
+        "reciprocal_rank_at_k": 1.0,
     }

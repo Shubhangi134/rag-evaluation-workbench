@@ -1,24 +1,54 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from app.document_processor import extract_text_from_pdf
-from app.document_processor import create_document_chunks
-from app.benchmark import compare_retrieval_strategies
+
+"""FastAPI endpoints for the RAG PDF chatbot."""
+
+import json
+import tempfile
+from io import BytesIO
+from pathlib import Path
+
+from fastapi import (
+    FastAPI,
+    UploadFile,
+    File,
+    Header,
+    Depends,
+    HTTPException,
+)
+from fastapi.middleware.cors import CORSMiddleware
+from pypdf import PdfReader
+
+from app.config import (
+    MAX_PDFS_PER_SESSION,
+    MAX_PDF_BYTES,
+    MAX_PDF_PAGES,
+)
+from app.models import ChatMessage, SessionData
+from app.session_manager import (
+    create_session,
+    get_session,
+    delete_session,
+    sessions,
+    sessions_lock,
+)
+from app.document_processor import (
+    extract_text_from_pdf,
+    create_page_chunks,
+)
 from app.retriever import (
     search_chunks,
     search_chunks_tfidf,
     search_chunks_semantic,
 )
-from app.database import initialize_database
-from app.database import save_chunks
-from app.database import load_chunks
 from app.generator import generate_answer
-from fastapi.middleware.cors import CORSMiddleware
-import json
-uploaded_chunks = []
+from app.benchmark import compare_retrieval_strategies
+
+
 app = FastAPI(
     title="RAG Evaluation Workbench",
-    description="Evaluate and compare retrieval strategies for RAG systems.",
-    version="0.1.0",
+    description="Chat with PDFs and compare retrieval methods.",
+    version="0.2.0",
 )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -29,217 +59,405 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-initialize_database()
+
+
+# --------------------------------------------------
+# Session helpers
+# --------------------------------------------------
+
+def require_session(
+    x_session_id: str = Header(...),
+) -> SessionData:
+    """Get the session belonging to the current request."""
+
+    session = get_session(x_session_id)
+
+    if session is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Session not found or expired.",
+        )
+
+    return session
+
+
+def get_all_chunks(session: SessionData):
+    """Get document chunks from one session only."""
+
+    with sessions_lock:
+        return [
+            chunk
+            for chunks in session.documents.values()
+            for chunk in chunks
+        ]
+
+
+def retrieve_documents(query, chunks, method, top_k):
+    """Choose the requested retrieval method."""
+
+    methods = {
+        "Keyword": search_chunks,
+        "TF-IDF": search_chunks_tfidf,
+        "Semantic": search_chunks_semantic,
+    }
+
+    if method not in methods:
+        raise HTTPException(
+            status_code=400,
+            detail="Choose Keyword, TF-IDF, or Semantic.",
+        )
+
+    return methods[method](query, chunks, top_k=top_k)
+
+
+def format_chunks(chunks):
+    """Prepare retrieved chunks for the frontend."""
+
+    return [
+        {
+            "document_id": chunk.document_id,
+            "chunk_index": chunk.chunk_index,
+            "page_number": chunk.page_number,
+            "text": chunk.text,
+        }
+        for chunk in chunks
+    ]
+
+
+# --------------------------------------------------
+# Basic endpoints
+# --------------------------------------------------
 
 @app.get("/")
 def read_root():
-    return {"message": "RAG Evaluation Workbench API is running"}
+    return {
+        "message": "RAG Evaluation Workbench API is running"
+    }
+
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
-@app.get("/documents")
-def get_documents():
-    chunks = load_chunks()
 
-    documents = {}
 
-    for chunk in chunks:
-        documents.setdefault(chunk.document_id, 0)
-        documents[chunk.document_id] += 1
+# --------------------------------------------------
+# Session endpoints
+# --------------------------------------------------
+
+@app.post("/sessions")
+def start_session():
+    """Create a new temporary user session."""
+
+    session = create_session()
 
     return {
-        "documents": [
+        "session_id": session.session_id,
+        "message": "Session created.",
+    }
+
+
+@app.delete("/sessions")
+def clear_session(
+    session: SessionData = Depends(require_session),
+):
+    """Delete the current session and its data."""
+
+    delete_session(session.session_id)
+
+    return {"message": "Session deleted."}
+
+
+# --------------------------------------------------
+# Document endpoints
+# --------------------------------------------------
+
+@app.get("/documents")
+def get_documents(
+    session: SessionData = Depends(require_session),
+):
+    """List PDFs uploaded in this session."""
+
+    with sessions_lock:
+        documents = [
             {
                 "filename": filename,
-                "chunk_count": chunk_count,
+                "chunk_count": len(chunks),
             }
-            for filename, chunk_count in documents.items()
+            for filename, chunks in session.documents.items()
         ]
-    }
+
+    return {"documents": documents}
+
+
 @app.post("/documents/upload")
-async def upload_document(file: UploadFile = File(...)):
-    if not file.filename or not file.filename.lower().endswith(".pdf"):
+async def upload_document(
+    file: UploadFile = File(...),
+    session: SessionData = Depends(require_session),
+):
+    """Upload and process a PDF in the current session."""
+
+    filename = (file.filename or "").replace("\\", "/").split("/")[-1]
+
+    if not filename.lower().endswith(".pdf"):
         raise HTTPException(
             status_code=400,
             detail="Only PDF files are allowed.",
         )
 
-    contents = await file.read()
+    # Read at most the allowed size plus one byte.
+    contents = await file.read(MAX_PDF_BYTES + 1)
 
-    import tempfile
-    from pathlib import Path
+    if len(contents) > MAX_PDF_BYTES:
+        raise HTTPException(
+            status_code=400,
+            detail="PDF must be 10 MB or smaller.",
+        )
 
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
-        temp_file.write(contents)
-        temp_path = Path(temp_file.name)
+    if not contents:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded PDF is empty.",
+        )
+
+    # Check the PDF before extracting its text.
+    try:
+        reader = PdfReader(BytesIO(contents))
+
+        if reader.is_encrypted:
+            raise HTTPException(
+                status_code=400,
+                detail="Encrypted PDFs are not supported.",
+            )
+
+        if len(reader.pages) > MAX_PDF_PAGES:
+            raise HTTPException(
+                status_code=400,
+                detail="PDF cannot contain more than 50 pages.",
+            )
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is not a valid PDF.",
+        )
+
+    # Existing PDF extraction expects a file path.
+    # Use a temporary file and remove it afterward.
+    temp_path = None
 
     try:
+        with tempfile.NamedTemporaryFile(
+            suffix=".pdf",
+            delete=False,
+        ) as temp_file:
+            temp_file.write(contents)
+            temp_path = Path(temp_file.name)
+
         text = extract_text_from_pdf(str(temp_path))
-        chunks = create_document_chunks(text, document_id=file.filename)
-        save_chunks(file.filename, chunks)
-        uploaded_chunks[:] = [
-          chunk for chunk in uploaded_chunks
-          if chunk.document_id != file.filename
-        ]
-        uploaded_chunks.extend(chunks)
+
+        if not text.strip():
+            raise HTTPException(
+                status_code=400,
+                detail="No readable text found in the PDF.",
+            )
+
+        chunks = create_page_chunks(
+            file_path=str(temp_path),
+            document_id=filename,
+        )
+
     finally:
-        temp_path.unlink(missing_ok=True)
+        if temp_path is not None:
+            temp_path.unlink(missing_ok=True)
+
+    # Save only inside this user's temporary session.
+    with sessions_lock:
+        if sessions.get(session.session_id) is not session:
+            raise HTTPException(
+                status_code=404,
+                detail="Session expired during upload.",
+            )
+
+        if (
+            filename not in session.documents
+            and len(session.documents) >= MAX_PDFS_PER_SESSION
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Maximum 3 PDFs allowed per session.",
+            )
+
+        session.documents[filename] = chunks
+
+        # Old conversation context may refer to old documents.
+        session.messages.clear()
 
     return {
-        "filename": file.filename,
+        "filename": filename,
         "content_type": file.content_type,
         "text_length": len(text),
         "chunk_count": len(chunks),
         "text_preview": text[:200],
     }
+
+
+# --------------------------------------------------
+# Search endpoint
+# --------------------------------------------------
+
 @app.get("/search")
-def search_documents(query: str, top_k: int = 3):
-    if top_k <= 0:
+def search_documents(
+    query: str,
+    top_k: int = 3,
+    method: str = "Keyword",
+    session: SessionData = Depends(require_session),
+):
+    """Search only the current session's documents."""
+
+    if not query.strip() or top_k <= 0:
         raise HTTPException(
             status_code=400,
-            detail="top_k must be greater than 0.",
+            detail="Enter a query and a valid top_k.",
         )
-    chunks = load_chunks()
-    results = search_chunks(query, chunks, top_k=top_k)
+
+    chunks = get_all_chunks(session)
+
+    results = retrieve_documents(
+        query, chunks, method, top_k
+    )
 
     return {
         "query": query,
-        "results": [
-            {
-                "document_id": chunk.document_id,
-                "chunk_index": chunk.chunk_index,
-                "text": chunk.text,
-            }
-            for chunk in results
-        ],
+        "results": format_chunks(results),
     }
+
+
+# --------------------------------------------------
+# Chat endpoint
+# --------------------------------------------------
 
 @app.get("/ask")
 def ask_question(
     query: str,
     top_k: int = 3,
-    history: str | None = None,
     method: str = "Keyword",
+    session: SessionData = Depends(require_session),
 ):
-    if not query.strip():
+    """Answer a question using the session's PDFs."""
+
+    if not query.strip() or top_k <= 0:
         raise HTTPException(
             status_code=400,
-            detail="Question cannot be empty.",
+            detail="Enter a question and a valid top_k.",
         )
 
-    if top_k <= 0:
+    chunks = get_all_chunks(session)
+
+    if not chunks:
         raise HTTPException(
             status_code=400,
-            detail="top_k must be greater than 0.",
+            detail="Upload a PDF before asking questions.",
         )
 
-    conversation_history = []
+    # Save a snapshot of recent conversation history.
+    with sessions_lock:
+        history = [
+            {
+                "role": message.role,
+                "content": message.content,
+            }
+            for message in session.messages[-10:]
+        ]
 
-    if history:
-        try:
-            conversation_history = json.loads(history)
-        except json.JSONDecodeError:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid conversation history format.",
-            )
-
-        if not isinstance(conversation_history, list):
-            raise HTTPException(
-                status_code=400,
-                detail="Conversation history must be a list.",
-            )
-
-        if len(conversation_history) > 20:
-            raise HTTPException(
-                status_code=400,
-                detail="Conversation history cannot exceed 20 messages.",
-            )
-
-        for item in conversation_history:
-            if (
-                not isinstance(item, dict)
-                or item.get("role") not in {"user", "assistant"}
-                or not isinstance(item.get("content"), str)
-            ):
-                raise HTTPException(
-                    status_code=400,
-                    detail=(
-                        "Each history message must have "
-                        "a valid role and text content."
-                    ),
-                )
-
-    chunks = load_chunks()
-    if method == "Keyword":
-        results = search_chunks(query, chunks, top_k=top_k)
-    elif method == "TF-IDF":
-        results = search_chunks_tfidf(query, chunks, top_k=top_k)
-    elif method == "Semantic":
-        results = search_chunks_semantic(query, chunks, top_k=top_k)
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid retrieval method. Choose Keyword, TF-IDF, or Semantic.",
-        )
-
-    answer = generate_answer(
-        query,
-        results,
-        conversation_history=conversation_history,
+    results = retrieve_documents(
+        query, chunks, method, top_k
     )
+
+    try:
+        answer = generate_answer(
+            query,
+            results,
+            conversation_history=history,
+        )
+
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Answer generation is currently unavailable.",
+        )
+
+    # Remember this question and answer for follow-ups.
+    with sessions_lock:
+        if sessions.get(session.session_id) is not session:
+            raise HTTPException(
+                status_code=404,
+                detail="Session expired during answer generation.",
+            )
+
+        session.messages.append(
+            ChatMessage(role="user", content=query)
+        )
+
+        session.messages.append(
+            ChatMessage(role="assistant", content=answer)
+        )
+
+        # Keep only the 20 most recent messages.
+        session.messages[:] = session.messages[-20:]
 
     return {
         "question": query,
         "answer": answer,
-        "retrieved_chunks": [
-            {
-                "document_id": chunk.document_id,
-                "chunk_index": chunk.chunk_index,
-                "text": chunk.text,
-            }
-            for chunk in results
-        ],
+        "retrieved_chunks": format_chunks(results),
     }
+
+
+# --------------------------------------------------
+# Benchmark endpoint
+# --------------------------------------------------
+
 @app.get("/benchmark")
 def benchmark_question(
     query: str,
     top_k: int = 3,
     relevant_ids: str = "",
+    session: SessionData = Depends(require_session),
 ):
-    if not query.strip():
+    """Compare retrieval methods on session documents."""
+
+    if not query.strip() or top_k <= 0:
         raise HTTPException(
             status_code=400,
-            detail="Question cannot be empty.",
+            detail="Enter a query and a valid top_k.",
         )
 
-    if top_k <= 0:
-        raise HTTPException(
-            status_code=400,
-            detail="top_k must be greater than 0.",
-        )
+    chunks = get_all_chunks(session)
 
-    chunks = load_chunks()
+    dataset_path = (
+        Path(__file__).resolve().parent.parent
+        / "evaluation_dataset.json"
+    )
 
-    from pathlib import Path
-
-    dataset_path = Path(__file__).resolve().parent.parent / "evaluation_dataset.json"
-
-    with dataset_path.open("r", encoding="utf-8") as dataset_file:
+    with dataset_path.open(
+        "r", encoding="utf-8"
+    ) as dataset_file:
         evaluation_dataset = json.load(dataset_file)
 
     matching_entry = next(
         (
             item for item in evaluation_dataset
-            if item["query"].strip().lower() == query.strip().lower()
+            if item["query"].strip().lower()
+            == query.strip().lower()
         ),
         None,
     )
 
     relevant_id_set = set(
         matching_entry["relevant_chunk_ids"]
-        if matching_entry
-        else []
+        if matching_entry else []
     )
 
     if relevant_ids:

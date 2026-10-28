@@ -1,6 +1,6 @@
 
 import os
-
+import re
 import ollama
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -13,6 +13,38 @@ SYSTEM_PROMPT = (
     "Do not invent facts. If the context is insufficient, say so clearly. "
     "Cite the supporting chunk IDs in your answer."
 )
+
+
+def format_answer_citations(answer, retrieved_chunks):
+    """Convert valid chunk references into PDF page citations."""
+
+    sources = {
+        str(chunk.chunk_index): (
+            f"[{chunk.document_id}, Page {chunk.page_number}]"
+        )
+        for chunk in retrieved_chunks
+        if chunk.page_number is not None
+    }
+
+    def replace_citation(match):
+        chunk_id = match.group(1)
+        return sources.get(chunk_id, "[Source unavailable]")
+
+    # Format 1: 【33】
+    answer = re.sub(
+        r"【(\d+)】",
+        replace_citation,
+        answer,
+    )
+
+    # Format 2: 【Source: filename, Page 6, Chunk 33】
+    answer = re.sub(
+        r"【Source:[^】]*Chunk\s+(\d+)】",
+        replace_citation,
+        answer,
+    )
+
+    return answer
 
 
 def generate_answer(
@@ -28,10 +60,17 @@ def generate_answer(
     if not retrieved_chunks:
         return "I couldn't find relevant information in the retrieved document."
 
+    
     context = "\n\n".join(
-        f"[Chunk {chunk.document_id}:{chunk.chunk_index}]\n{chunk.text}"
+        (
+            f"[Source: {chunk.document_id}, "
+            f"Page {chunk.page_number}, "
+            f"Chunk {chunk.chunk_index}]\n"
+            f"{chunk.text}"
+        )
         for chunk in retrieved_chunks
     )
+
 
     history_text = ""
     if conversation_history:
@@ -93,7 +132,12 @@ def generate_answer(
                     ],
                 )
 
-                return response["message"]["content"]
+                answer = response["message"]["content"]
+
+                return format_answer_citations(
+                    answer,
+                    retrieved_chunks,
+                )
 
             elif provider == "openai":
                 api_key = os.getenv(

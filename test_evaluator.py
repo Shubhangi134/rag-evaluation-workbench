@@ -43,8 +43,7 @@ def test_compare_retrieval_strategies_returns_all_metrics():
         k=2,
     )
 
-    assert set(results.keys()) == {"keyword", "tfidf", "semantic"}
-
+    assert set(results.keys()) == {"bm25", "tfidf", "semantic"}
     for metrics in results.values():
         assert "precision_at_k" in metrics
         assert "recall_at_k" in metrics

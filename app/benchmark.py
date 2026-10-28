@@ -1,19 +1,22 @@
+
 def compare_retrieval_strategies(
     query: str,
     chunks,
     relevant_ids: set[str],
     k: int = 3,
 ) -> dict[str, dict[str, float]]:
-    """Compare keyword, TF-IDF, and semantic retrieval on the same query."""
+    """Compare BM25, TF-IDF, and semantic retrieval on one query."""
+
     from app.evaluator import evaluate_retrieval
     from app.retriever import (
-        search_chunks,
+        search_chunks_bm25,
         search_chunks_tfidf,
         search_chunks_semantic,
     )
 
+    # Run each method on the same document chunks.
     strategies = {
-        "keyword": search_chunks,
+        "bm25": search_chunks_bm25,
         "tfidf": search_chunks_tfidf,
         "semantic": search_chunks_semantic,
     }
@@ -21,11 +24,20 @@ def compare_retrieval_strategies(
     results = {}
 
     for name, retrieve in strategies.items():
-        retrieved_chunks = retrieve(query, chunks, top_k=k)
+        # Retrieve the top-k most relevant chunks.
+        retrieved_chunks = retrieve(
+            query,
+            chunks,
+            top_k=k,
+        )
+
+        # Convert each chunk into its unique ID.
         retrieved_ids = [
             f"{chunk.document_id}:{chunk.chunk_index}"
             for chunk in retrieved_chunks
         ]
+
+        # Evaluate retrieval against known relevant chunks.
         results[name] = evaluate_retrieval(
             retrieved_ids,
             relevant_ids,

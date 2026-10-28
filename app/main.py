@@ -34,11 +34,14 @@ from app.document_processor import (
     extract_text_from_pdf,
     create_page_chunks,
 )
+
 from app.retriever import (
     search_chunks,
+    search_chunks_bm25,
     search_chunks_tfidf,
     search_chunks_semantic,
 )
+
 from app.generator import generate_answer, rewrite_question
 from app.benchmark import compare_retrieval_strategies
 
@@ -92,22 +95,31 @@ def get_all_chunks(session: SessionData):
         ]
 
 
+
 def retrieve_documents(query, chunks, method, top_k):
     """Choose the requested retrieval method."""
 
     methods = {
-        "Keyword": search_chunks,
+        "BM25": search_chunks_bm25,
         "TF-IDF": search_chunks_tfidf,
         "Semantic": search_chunks_semantic,
+
+        # Temporary support for the old method.
+        "Keyword": search_chunks,
     }
 
     if method not in methods:
         raise HTTPException(
             status_code=400,
-            detail="Choose Keyword, TF-IDF, or Semantic.",
+            detail="Choose BM25, TF-IDF, or Semantic.",
         )
 
-    return methods[method](query, chunks, top_k=top_k)
+    return methods[method](
+        query,
+        chunks,
+        top_k=top_k,
+    )
+
 
 
 def format_chunks(chunks):
@@ -339,7 +351,7 @@ async def upload_document(
 def search_documents(
     query: str,
     top_k: int = 3,
-    method: str = "Keyword",
+    method: str = "BM25",
     session: SessionData = Depends(require_session),
 ):
     """Search documents in the current session."""

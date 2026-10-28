@@ -22,10 +22,17 @@ dist/
 .vscode/
 .DS_Store
 Thumbs.db
+
 # Runtime database
 rag_workbench.db
+*.db-journal
 
-# PDF files
+# Uploaded and temporary PDF files
 pdfs/*.pdf
+
+# Downloaded benchmark datasets
 datasets/
-frontend/dist/
+
+# Temporary application files
+temp/
+tmp/

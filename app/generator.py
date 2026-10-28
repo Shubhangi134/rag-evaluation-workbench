@@ -192,3 +192,81 @@ def generate_answer(
         "All configured LLM providers failed. "
         + " | ".join(errors)
     )
+
+def rewrite_question(
+    question: str,
+    conversation_history: list[dict] | None = None,
+) -> str:
+    """Rewrite a follow-up question using previous chat history."""
+
+    if not question.strip():
+        raise ValueError("Question cannot be empty.")
+
+    # No history means the question can be used directly.
+    if not conversation_history:
+        return question.strip()
+
+    # Use only the last 10 messages.
+    recent_history = conversation_history[-10:]
+
+    history_text = "\n".join(
+        f"{message['role']}: {message['content']}"
+        for message in recent_history
+        if message.get("role") in ("user", "assistant")
+        and message.get("content")
+    )
+
+    if not history_text:
+        return question.strip()
+
+    system_prompt = (
+        "You rewrite questions for a PDF search system. "
+        "Use the previous conversation to understand references "
+        "such as 'it', 'its', 'this method', or 'that paper'. "
+        "Rewrite the current question as a standalone question. "
+        "If the question is already clear or starts a new topic, "
+        "keep its meaning unchanged. "
+        "Do not answer the question. "
+        "Do not invent information. "
+        "Return only the rewritten question."
+    )
+
+    user_prompt = (
+        f"Previous conversation:\n{history_text}\n\n"
+        f"Current question: {question}\n\n"
+        "Standalone question:"
+    )
+
+    try:
+        client = ollama.Client()
+
+        response = client.chat(
+            model=os.getenv(
+                "OLLAMA_MODEL",
+                "gpt-oss:120b-cloud",
+            ),
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_prompt,
+                },
+            ],
+        )
+
+        rewritten = response["message"]["content"].strip()
+
+        # Use the original question if the model returns nothing.
+        return rewritten or question.strip()
+
+    except Exception as error:
+        print(
+            f"Question rewriting unavailable: "
+            f"{type(error).__name__}"
+        )
+
+        # Keep the chatbot usable if rewriting fails.
+        return question.strip()

@@ -39,7 +39,7 @@ from app.retriever import (
     search_chunks_tfidf,
     search_chunks_semantic,
 )
-from app.generator import generate_answer
+from app.generator import generate_answer, rewrite_question
 from app.benchmark import compare_retrieval_strategies
 
 
@@ -123,6 +123,31 @@ def format_chunks(chunks):
         for chunk in chunks
     ]
 
+
+def answer_previous_question(query, history):
+    """Answer questions asking about the previous user question."""
+
+    normalized = query.lower().strip().rstrip("?")
+
+    supported_questions = {
+        "what was my previous question",
+        "what did i ask before",
+        "what was my last question",
+    }
+
+    if normalized not in supported_questions:
+        return None
+
+    previous_questions = [
+        message["content"]
+        for message in history
+        if message["role"] == "user"
+    ]
+
+    if not previous_questions:
+        return "You haven't asked any previous questions yet."
+
+    return f'Your previous question was: "{previous_questions[-1]}"'
 
 # --------------------------------------------------
 # Basic endpoints
@@ -309,13 +334,15 @@ async def upload_document(
 # --------------------------------------------------
 
 @app.get("/search")
+
+@app.get("/search")
 def search_documents(
     query: str,
     top_k: int = 3,
     method: str = "Keyword",
     session: SessionData = Depends(require_session),
 ):
-    """Search only the current session's documents."""
+    """Search documents in the current session."""
 
     if not query.strip() or top_k <= 0:
         raise HTTPException(
@@ -326,14 +353,16 @@ def search_documents(
     chunks = get_all_chunks(session)
 
     results = retrieve_documents(
-        query, chunks, method, top_k
+        query,
+        chunks,
+        method,
+        top_k,
     )
 
     return {
         "query": query,
         "results": format_chunks(results),
     }
-
 
 # --------------------------------------------------
 # Chat endpoint
@@ -372,9 +401,46 @@ def ask_question(
             for message in session.messages[-10:]
         ]
 
-    results = retrieve_documents(
-        query, chunks, method, top_k
+    
+    # Handle simple conversation-history questions directly.
+    history_answer = answer_previous_question(query, history)
+
+    if history_answer is not None:
+        with sessions_lock:
+            if sessions.get(session.session_id) is not session:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Session not found or expired.",
+                )
+
+            session.messages.append(
+                ChatMessage(role="user", content=query)
+            )
+            session.messages.append(
+                ChatMessage(role="assistant", content=history_answer)
+            )
+            session.messages[:] = session.messages[-20:]
+
+        return {
+            "question": query,
+            "answer": history_answer,
+            "retrieved_chunks": [],
+        }
+
+    # Rewrite the question using previous conversation context.
+    search_query = rewrite_question(
+        question=query,
+        conversation_history=history,
     )
+
+    # Retrieve relevant PDF chunks using the rewritten question.
+    results = retrieve_documents(
+        search_query,
+        chunks,
+        method,
+        top_k,
+    )
+
 
     try:
         answer = generate_answer(

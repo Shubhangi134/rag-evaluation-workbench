@@ -200,6 +200,14 @@ def generate_qasper_answer(question, retrieved_chunks):
 
 def evaluate_faithfulness(answer, retrieved_chunks):
     """Judge whether answer claims are supported by evidence."""
+    
+    # An abstention makes no factual claims to evaluate.
+    if answer.strip().lower() == "insufficient evidence.":
+        return {
+            "faithfulness_score": None,
+            "claims": [],
+        }
+
 
     if not answer.strip():
         return {
@@ -348,10 +356,12 @@ def test_qasper_answer():
     )
 
     print("\nFaithfulness evaluation:")
-    print(
-        f"Faithfulness score: "
-        f"{faithfulness['faithfulness_score']:.4f}"
-    )
+    faithfulness_score = faithfulness["faithfulness_score"]
+
+    if faithfulness_score is None:
+        print("    Faithfulness: N/A (abstained)")
+    else:
+        print(f"    Faithfulness: {faithfulness_score:.4f}")
 
     print("\nClaim-by-claim evaluation:")
 
@@ -396,6 +406,189 @@ def get_reference_answer(answer_data):
 
     return ""
 
+
+def summarize_qasper_results(results, method_name):
+    """Calculate evaluation statistics for one retrieval method."""
+
+    method_results = [
+        result
+        for result in results
+        if result["method"] == method_name
+    ]
+
+    if not method_results:
+        return None
+
+    average_f1 = sum(
+        result["reference_token_f1"]
+        for result in method_results
+    ) / len(method_results)
+
+    valid_scores = [
+        result["faithfulness_score"]
+        for result in method_results
+        if result["faithfulness_score"] is not None
+    ]
+
+    average_faithfulness = (
+        sum(valid_scores) / len(valid_scores)
+        if valid_scores
+        else None
+    )
+
+    abstention_count = sum(
+        result["generated_answer"].strip().lower()
+        == "insufficient evidence."
+        for result in method_results
+    )
+
+    return {
+        "question_count": len(method_results),
+        "mean_token_f1": average_f1,
+        "mean_faithfulness": average_faithfulness,
+        "abstention_count": abstention_count,
+        "abstention_rate": (
+            abstention_count / len(method_results)
+        ),
+    }
+
+
+def compare_qasper_methods():
+    """Compare three retrieval methods on QASPER questions."""
+
+    with DATA_PATH.open("r", encoding="utf-8") as file:
+        papers = json.load(file)
+
+    strategies = {
+        "BM25": search_chunks_bm25,
+        "TF-IDF": search_chunks_tfidf,
+        "Semantic": search_chunks_semantic,
+    }
+
+    results = []
+    question_count = 0
+
+    for paper_id, paper in papers.items():
+        chunks = create_paper_chunks(paper_id, paper)
+
+        for qa in paper.get("qas", []):
+            references = [
+                get_reference_answer(annotation["answer"])
+                for annotation in qa.get("answers", [])
+            ]
+
+            references = [
+                reference for reference in references
+                if reference
+            ]
+
+            if not references:
+                continue
+
+            question_count += 1
+            question = qa["question"]
+
+            print(f"\nQuestion {question_count}: {question}")
+
+            for method_name, retrieve in strategies.items():
+                print(f"  Evaluating {method_name}...")
+
+                retrieved = retrieve(
+                    question,
+                    chunks,
+                    top_k=3,
+                )
+
+                answer = generate_qasper_answer(
+                    question,
+                    retrieved,
+                )
+
+                f1 = best_reference_f1(
+                    answer,
+                    references,
+                )
+
+                faithfulness = evaluate_faithfulness(
+                    answer,
+                    retrieved,
+                )
+
+                results.append({
+                    "paper_id": paper_id,
+                    "question_id": qa["question_id"],
+                    "question": question,
+                    "method": method_name,
+                    "reference_answers": references,
+                    "generated_answer": answer,
+                    "retrieved_chunk_ids": [
+                        chunk.chunk_index
+                        for chunk in retrieved
+                    ],
+                    "reference_token_f1": f1,
+                    "faithfulness_score": (
+                        faithfulness["faithfulness_score"]
+                    ),
+                    "claims": faithfulness["claims"],
+                })
+
+                print(f"    Token F1: {f1:.4f}")
+                
+                faithfulness_score = faithfulness["faithfulness_score"]
+
+                if faithfulness_score is None:
+                    print("    Faithfulness: N/A (abstained)")
+                else:
+                    print(f"    Faithfulness: {faithfulness_score:.4f}")
+
+
+            if question_count >= MAX_QUESTIONS:
+                break
+
+        if question_count >= MAX_QUESTIONS:
+            break
+
+    # Save individual answers and evaluation results.
+    output_path = (
+        Path(__file__).resolve().parent
+        / "results"
+        / "qasper_comparison.json"
+    )
+
+    output_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    with output_path.open("w", encoding="utf-8") as file:
+        json.dump(results, file, indent=2, ensure_ascii=False)
+
+    print("\nQASPER Comparison Summary")
+    print("-" * 45)
+
+    
+    for method_name in strategies:
+        summary = summarize_qasper_results(results, method_name)
+
+        if summary is None:
+            continue
+
+        print(f"\n{method_name}")
+        print(f"Questions: {summary['question_count']}")
+        print(f"Mean Token F1: {summary['mean_token_f1']:.4f}")
+
+        mean_faithfulness = summary["mean_faithfulness"]
+
+        if mean_faithfulness is None:
+            print("Mean Faithfulness: N/A")
+        else:
+            print(f"Mean Faithfulness: {mean_faithfulness:.4f}")
+
+        print(f"Abstentions: {summary['abstention_count']}")
+        print(f"Abstention Rate: {summary['abstention_rate']:.2%}")
+
+
+    print(f"\nResults saved to: {output_path}")
 
 def main():
     """Display three QASPER questions and their references."""

@@ -8,10 +8,17 @@ from openai import OpenAI
 load_dotenv()
 
 SYSTEM_PROMPT = (
-    "You answer questions about documents using only the provided "
-    "retrieved context. Do not use your general knowledge to fill gaps. "
-    "Do not invent facts. If the context is insufficient, say so clearly. "
-    "Cite the supporting chunk IDs in your answer."
+    "You answer questions about uploaded documents using only the "
+    "provided retrieved context. Do not use general knowledge to fill gaps. "
+    "Do not invent facts. If the retrieved context does not contain enough "
+    "information to answer, clearly say that the evidence is insufficient. "
+    "Use previous conversation history only to understand follow-up questions "
+    "or answer questions about the conversation itself. "
+    "Write clear, natural answers without automatically adding citations, "
+    "page references, or chunk identifiers. "
+    "The application displays supporting PDF sources separately. "
+    "If the user explicitly asks for a filename or page number, "
+    "provide that information when available."
 )
 
 
@@ -134,10 +141,10 @@ def generate_answer(
 
                 answer = response["message"]["content"]
 
-                return format_answer_citations(
-                    answer,
-                    retrieved_chunks,
-                )
+                if not answer:
+                    raise RuntimeError("The provider returned an empty answer.")
+
+                return answer
 
             elif provider == "openai":
                 api_key = os.getenv(

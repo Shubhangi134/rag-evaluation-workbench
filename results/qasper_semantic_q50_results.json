@@ -1,0 +1,1594 @@
+[
+  {
+    "paper_id": "1912.01214",
+    "question_id": "b6f15fb6279b82e34a5bf4828b7b5ddabfdf1d54",
+    "question": "which multilingual approaches do they compare with?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "BIBREF19 BIBREF20",
+      "multilingual NMT (MNMT) BIBREF19"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      33,
+      31,
+      14
+    ],
+    "retrieved_contexts": [
+      "Experiments ::: Setup ::: Datasets.\nFor MultiUN corpus, we use four languages: English (En) is set as the pivot language, which has parallel data with other three languages which do not have parallel data between each other. The three languages are Arabic (Ar), Spanish (Es), and Russian (Ru), and mutual translation between themselves constitutes six zero-shot translation direction for evaluation. We use 80K BPE splits as the vocabulary. Note that all sentences are tokenized by the tokenize.perl script, and we lowercase all data to avoid a large vocabulary for the MultiUN corpus.",
+      "Experiments ::: Setup\nWe evaluate our cross-lingual pre-training based transfer approach against several strong baselines on two public datatsets, Europarl BIBREF31 and MultiUN BIBREF32, which contain multi-parallel evaluation data to assess the zero-shot performance. In all experiments, we use BLEU as the automatic metric for translation evaluation.",
+      "Approach\nIn this section, we will present a cross-lingual pre-training based transfer approach. This method is designed for a common zero-shot scenario where there are a lot of source$\\leftrightarrow $pivot and pivot$\\leftrightarrow $target bilingual data but no source$\\leftrightarrow $target parallel data, and the whole training process can be summarized as follows step by step:"
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1912.01214",
+    "question_id": "f5e6f43454332e0521a778db0b769481e23e7682",
+    "question": "what are the pivot-based baselines?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "pivoting pivoting$_{\\rm m}$",
+      "firstly translates a source language into the pivot language which is later translated to the target language"
+    ],
+    "generated_answer": "The pivot‑based baselines are the **pivoting** method and the **pivot‑synthetic** method.",
+    "retrieved_chunk_ids": [
+      37,
+      9,
+      38
+    ],
+    "retrieved_contexts": [
+      "Experiments ::: Main Results ::: Results on Europarl Dataset.\nRegarding comparison between the baselines in table TABREF19, we find that pivoting is the strongest baseline that has significant advantage over other two baselines. Cross-lingual transfer for languages without shared vocabularies BIBREF16 manifests the worst performance because of not using source$\\leftrightarrow $pivot parallel data, which is utilized as beneficial supervised signal for the other two baselines.",
+      "Related Work\nPivot-based Method is a common strategy to obtain a source$\\rightarrow $target model by introducing a pivot language. This approach is further divided into pivoting and pivot-synthetic. While the former firstly translates a source language into the pivot language which is later translated to the target language BIBREF4, BIBREF5, BIBREF12, the latter trains a source$\\rightarrow $target model with pseudo data generated from source-pivot or pivot-target parallel data BIBREF13, BIBREF14. Although the pivot-based methods can achieve not bad performance, it always falls into a computation-expensive and parameter-vast dilemma of quadratic growth in the number of source languages, and suffers from the error propagation problem BIBREF15.",
+      "Experiments ::: Main Results ::: Results on Europarl Dataset.\nOur best approach of MLM+BRLM-SA achieves the significant superior performance to all baselines in the zero-shot directions, improving by 0.9-4.8 BLEU points over the strong pivoting. Meanwhile, in the supervised direction of pivot$\\rightarrow $target, our approaches performs even better than the original supervised Transformer thanks to the shared encoder trained on both large-scale monolingual data and parallel data between multiple languages."
+    ],
+    "reference_token_f1": 0.20000000000000004,
+    "faithfulness_score": 0.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The pivot‑based baselines are the pivoting method and the pivot‑synthetic method.",
+        "supported": false
+      }
+    ]
+  },
+  {
+    "paper_id": "1912.01214",
+    "question_id": "9a05a5f4351db75da371f7ac12eb0b03607c4b87",
+    "question": "which datasets did they experiment with?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Europarl MultiUN",
+      "Europarl BIBREF31 MultiUN BIBREF32"
+    ],
+    "generated_answer": "Europarl and MultiUN corpora.",
+    "retrieved_chunk_ids": [
+      37,
+      32,
+      38
+    ],
+    "retrieved_contexts": [
+      "Experiments ::: Main Results ::: Results on Europarl Dataset.\nRegarding comparison between the baselines in table TABREF19, we find that pivoting is the strongest baseline that has significant advantage over other two baselines. Cross-lingual transfer for languages without shared vocabularies BIBREF16 manifests the worst performance because of not using source$\\leftrightarrow $pivot parallel data, which is utilized as beneficial supervised signal for the other two baselines.",
+      "Experiments ::: Setup ::: Datasets.\nThe statistics of Europarl and MultiUN corpora are summarized in Table TABREF18. For Europarl corpus, we evaluate on French-English-Spanish (Fr-En-Es), German-English-French (De-En-Fr) and Romanian-English-German (Ro-En-De), where English acts as the pivot language, its left side is the source language, and its right side is the target language. We remove the multi-parallel sentences between different training corpora to ensure zero-shot settings. We use the devtest2006 as the validation set and the test2006 as the test set for Fr$\\rightarrow $Es and De$\\rightarrow $Fr. For distant language pair Ro$\\rightarrow $De, we extract 1,000 overlapping sentences from newstest2016 as the test set and the 2,000 overlapping sentences split from the training set as the validation set since there is no official validation and test sets. For vocabulary, we use 60K sub-word tokens based on Byte Pair Encoding (BPE) BIBREF33.",
+      "Experiments ::: Main Results ::: Results on Europarl Dataset.\nOur best approach of MLM+BRLM-SA achieves the significant superior performance to all baselines in the zero-shot directions, improving by 0.9-4.8 BLEU points over the strong pivoting. Meanwhile, in the supervised direction of pivot$\\rightarrow $target, our approaches performs even better than the original supervised Transformer thanks to the shared encoder trained on both large-scale monolingual data and parallel data between multiple languages."
+    ],
+    "reference_token_f1": 0.6666666666666666,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "Europarl and MultiUN corpora.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1912.01214",
+    "question_id": "5eda469a8a77f028d0c5f1acd296111085614537",
+    "question": "what language pairs are explored?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "De-En, En-Fr, Fr-En, En-Es, Ro-En, En-De, Ar-En, En-Ru",
+      "French-English-Spanish (Fr-En-Es), German-English-French (De-En-Fr) and Romanian-English-German (Ro-En-De) Arabic (Ar), Spanish (Es), and Russian (Ru), and mutual translation between themselves constitutes six zero-shot translation"
+    ],
+    "generated_answer": "The experiments evaluate:\n\n* **MultiUN** – English is the pivot language with parallel data to Arabic, Spanish and Russian, and the six zero‑shot directions among Arabic, Spanish and Russian.  \n* **Europarl** – three language triples are used: French‑English‑Spanish, German‑English‑French, and Romanian‑English‑German (source → pivot → target and the corresponding zero‑shot source‑to‑target pairs).",
+    "retrieved_chunk_ids": [
+      33,
+      32,
+      37
+    ],
+    "retrieved_contexts": [
+      "Experiments ::: Setup ::: Datasets.\nFor MultiUN corpus, we use four languages: English (En) is set as the pivot language, which has parallel data with other three languages which do not have parallel data between each other. The three languages are Arabic (Ar), Spanish (Es), and Russian (Ru), and mutual translation between themselves constitutes six zero-shot translation direction for evaluation. We use 80K BPE splits as the vocabulary. Note that all sentences are tokenized by the tokenize.perl script, and we lowercase all data to avoid a large vocabulary for the MultiUN corpus.",
+      "Experiments ::: Setup ::: Datasets.\nThe statistics of Europarl and MultiUN corpora are summarized in Table TABREF18. For Europarl corpus, we evaluate on French-English-Spanish (Fr-En-Es), German-English-French (De-En-Fr) and Romanian-English-German (Ro-En-De), where English acts as the pivot language, its left side is the source language, and its right side is the target language. We remove the multi-parallel sentences between different training corpora to ensure zero-shot settings. We use the devtest2006 as the validation set and the test2006 as the test set for Fr$\\rightarrow $Es and De$\\rightarrow $Fr. For distant language pair Ro$\\rightarrow $De, we extract 1,000 overlapping sentences from newstest2016 as the test set and the 2,000 overlapping sentences split from the training set as the validation set since there is no official validation and test sets. For vocabulary, we use 60K sub-word tokens based on Byte Pair Encoding (BPE) BIBREF33.",
+      "Experiments ::: Main Results ::: Results on Europarl Dataset.\nRegarding comparison between the baselines in table TABREF19, we find that pivoting is the strongest baseline that has significant advantage over other two baselines. Cross-lingual transfer for languages without shared vocabularies BIBREF16 manifests the worst performance because of not using source$\\leftrightarrow $pivot parallel data, which is utilized as beneficial supervised signal for the other two baselines."
+    ],
+    "reference_token_f1": 0.391304347826087,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "For MultiUN, English is the pivot language with parallel data to Arabic, Spanish and Russian.",
+        "supported": true
+      },
+      {
+        "claim": "For MultiUN, there are six zero‑shot directions among Arabic, Spanish and Russian.",
+        "supported": true
+      },
+      {
+        "claim": "For Europarl, three language triples are used: French‑English‑Spanish, German‑English‑French, and Romanian‑English‑German.",
+        "supported": true
+      },
+      {
+        "claim": "For Europarl, source → pivot → target and the corresponding zero‑shot source‑to‑target pairs are evaluated.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1810.08699",
+    "question_id": "18c5d366b1da8447b5404eab71f4cc658ba12e6f",
+    "question": "what ner models were evaluated?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Stanford NER spaCy 2.0  recurrent model with a CRF top layer",
+      "Stanford NER spaCy 2.0 recurrent model with a CRF top layer"
+    ],
+    "generated_answer": "The evaluated NER models were Stanford NER (a CRF classifier), spaCy 2.0, and a Char‑biLSTM + biLSTM + CRF model.",
+    "retrieved_chunk_ids": [
+      26,
+      33,
+      35
+    ],
+    "retrieved_contexts": [
+      "Models\nStanford NER is conditional random fields (CRF) classifier based on lexical and contextual features such as the current word, character-level n-grams of up to length 6 at its beginning and the end, previous and next words, word shape and sequence features BIBREF16 .",
+      "Discussion\nIt is clear that the development set of automatically generated examples was not an ideal indicator of models' performance on gold-standard test set. Higher development set scores often led to lower test scores as seen in the evaluation results for spaCy 2.0 and Char-biLSTM+biLSTM+CRF (Tables TABREF21 and TABREF20 ). Analysis of errors on the development set revealed that many were caused by the incompleteness of annotations, when named entity recognizers correctly predicted entities that were absent from annotations (e.g. [ԽՍՀՄ-ի LOC] (USSR's), [Դինամոն ORG] (the_Dinamo), [Պիրենեյան թերակղզու LOC] (Iberian Peninsula's) etc). Similarly, the recognizers often correctly ignored non-entities that are incorrectly labeled in data (e.g. [օսմանների PER], [կոնսերվատորիան ORG] etc).",
+      "Conclusion\nWe release two named-entity annotated datasets for the Armenian language: a silver-standard corpus for training NER models, and a gold-standard corpus for testing. It is worth to underline the importance of the latter corpus, as we aim it to serve as a benchmark for future named entity recognition systems designed for the Armenian language. Along with the corpora, we publish GloVe word vector models trained on a collection of Armenian texts."
+    ],
+    "reference_token_f1": 0.5,
+    "faithfulness_score": 0.6666666666666666,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "Stanford NER (a CRF classifier) was evaluated.",
+        "supported": false
+      },
+      {
+        "claim": "spaCy 2.0 was evaluated.",
+        "supported": true
+      },
+      {
+        "claim": "Char‑biLSTM + biLSTM + CRF model was evaluated.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1810.08699",
+    "question_id": "b5e4866f0685299f1d7af267bbcc4afe2aab806f",
+    "question": "what is the source of the news sentences?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "ilur.am",
+      "links between Wikipedia articles to generate sequences of named-entity annotated tokens"
+    ],
+    "generated_answer": "The sentences were sourced from the Armenian Wikipedia (using the 20 February 2018 dump).",
+    "retrieved_chunk_ids": [
+      15,
+      16,
+      17
+    ],
+    "retrieved_contexts": [
+      "Generated data\nUsing the algorithm described above, we generated 7455 annotated sentences with 163247 tokens based on 20 February 2018 dump of Armenian Wikipedia.",
+      "Generated data\nThe generated data is still significantly smaller than the manually annotated corpora from CoNLL 2002 and 2003. For comparison, the train set of English CoNLL 2003 corpus contains 203621 tokens and the German one 206931, while the Spanish and Dutch corpora from CoNLL 2002 respectively 273037 and 218737 lines. The smaller size of our generated data can be attributed to the strict selection of candidate sentences as well as simply to the relatively small size of Armenian Wikipedia.",
+      "Generated data\nThe accuracy of annotation in the generated corpus heavily relies on the quality of links in Wikipedia articles. During generation, we assumed that first mentions of all named entities have an outgoing link to their article, however this was not always the case in actual source data and as a result the train set contained sentences where not all named entities are labeled. Annotation inaccuracies also stemmed from wrongly assigned link boundaries (for example, in Wikipedia article Արթուր Ուելսլի Վելինգթոն (Arthur Wellesley) there is a link to the Napoleon article with the text \"է Նապոլեոնը\" (\"Napoleon is\"), when it should be \"Նապոլեոնը\" (\"Napoleon\")). Another kind of common annotation errors occurred when a named entity appeared inside a link not targeting a LOC, ORG, or PER article (e.g. \"ԱՄՆ նախագահական ընտրություններում\" (\"USA presidential elections\") is linked to the article ԱՄՆ նախագահական ընտրություններ 2016 (United States presidential election, 2016) and as a result [LOC ԱՄՆ] (USA) is lost)."
+    ],
+    "reference_token_f1": 0.07692307692307691,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The sentences were sourced from the Armenian Wikipedia (using the 20 February 2018 dump).",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1810.08699",
+    "question_id": "1f085b9bb7bfd0d6c8cba1a9d73f08fcf2da7590",
+    "question": "did they use a crowdsourcing platform for manual annotations?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "No",
+      "No"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      30,
+      21,
+      8
+    ],
+    "retrieved_contexts": [
+      "Evaluation\nWe randomly selected 80% of generated annotated sentences for training and used the other 20% as a development set. The models with the best F1 score on the development set were tested on the manually annotated gold dataset.",
+      "Test dataset\nQuotation marks around a named entity were not annotated unless those quotations were a part of that entity's full official name (e.g. «Նաիրիտ գործարան» ՓԲԸ (\"Nairit Plant\" CJSC)).",
+      "Automated training corpus generation\nWe used Sysoev and Andrianov's modification of the Nothman et al. approach to automatically generate data for training a named entity recognizer. This approach uses links between Wikipedia articles to generate sequences of named-entity annotated tokens."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1609.00425",
+    "question_id": "b6ae8e10c6a0d34c834f18f66ab730b670fb528c",
+    "question": "what are the topics pulled from Reddit?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "politics, business, science, and AskReddit, and 1000 additional posts from the Reddit frontpage. ",
+      "training data has posts from politics, business, science and other popular topics; the trained model is applied to millions of unannotated posts on all of Reddit"
+    ],
+    "generated_answer": "The Reddit posts cover topics such as climate change, abortion, world news, relationship advice, the future of artificial intelligence, and cooking.",
+    "retrieved_chunk_ids": [
+      8,
+      44,
+      11
+    ],
+    "retrieved_contexts": [
+      "Introduction\nWe train a predictive model to classify dogmatic posts from Reddit, one of the most popular discussion communities on the web. Posts on Reddit capture discussion and debate across a diverse set of domains and topics – users talk about everything from climate change and abortion, to world news and relationship advice, to the future of artificial intelligence. As a prerequisite to training our model, we have created a corpus of 5,000 Reddit posts annotated with levels of dogmatism, which we are releasing to share with other researchers.",
+      "What subreddits have the highest and lowest levels of dogmatism? (R1)\nA natural starting point for analyzing dogmatism on Reddit is to examine how it characterizes the site's sub-communities. For example, we might expect to see that subreddits oriented around topics such as abortion or climate change are more dogmatic, and subreddits about cooking are less so.",
+      "Dogmatism data\nPosts on Reddit capture debate and discussion across a diverse set of topics, making them a natural starting point for untangling domain-independent linguistic features of dogmatism."
+    ],
+    "reference_token_f1": 0.25531914893617025,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The Reddit posts cover topics such as climate change, abortion, world news, relationship advice, the future of artificial intelligence, and cooking.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1609.00425",
+    "question_id": "a87a009c242d57c51fc94fe312af5e02070f898b",
+    "question": "What predictive model do they build?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "logistic regression models",
+      "logistic regression models based on unigram bag-of-words features (BOW), sentiment signals (SENT), the linguistic features from our earlier analyses (LING), and combinations of these features."
+    ],
+    "generated_answer": "They train a predictive model that classifies Reddit posts as dogmatic versus non‑dogmatic.",
+    "retrieved_chunk_ids": [
+      52,
+      38,
+      8
+    ],
+    "retrieved_contexts": [
+      "What user behaviors are predictive of dogmatism? (R3)\nWe have shown dogmatism is captured by many linguistic features, but can we discover other high-level user behaviors that are similarly predictive?",
+      "Predicting dogmatism\nPrediction task. Our goal is (1) to understand how well we can use the strategies in Section 3 to predict dogmatism, and (2) to test the domain-independence of these strategies. First, we test the performance of our model under cross-validation within the Reddit comment dataset. We then evaluate the Reddit-based model on a held out corpus of New York Times comments annotated using the technique in Section 2. We did not refer to this second dataset during feature construction.",
+      "Introduction\nWe train a predictive model to classify dogmatic posts from Reddit, one of the most popular discussion communities on the web. Posts on Reddit capture discussion and debate across a diverse set of domains and topics – users talk about everything from climate change and abortion, to world news and relationship advice, to the future of artificial intelligence. As a prerequisite to training our model, we have created a corpus of 5,000 Reddit posts annotated with levels of dogmatism, which we are releasing to share with other researchers."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They train a predictive model that classifies Reddit posts as dogmatic versus non‑dogmatic.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1801.05147",
+    "question_id": "ef4dba073d24042f24886580ae77add5326f2130",
+    "question": "What accuracy does the proposed system achieve?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "F1 scores of 85.99 on the DL-PS data,  75.15 on the EC-MT data and 71.53 on the EC-UQ data",
+      "F1 of 85.99 on the DL-PS dataset (dialog domain); 75.15 on EC-MT and 71.53 on EC-UQ (e-commerce domain)"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      76,
+      78,
+      73
+    ],
+    "retrieved_contexts": [
+      "Comparison Systems\nThe proposed approach (henceforward referred to as “ALCrowd”) is compared with the following systems:",
+      "Comparison Systems\nCRF-VT: We use the same settings of the CRF system, except that the training data is the voted version, whose groundtruths are produced by majority voting at the character level for each annotated sentence.",
+      "Settings\nFor evaluation, we use the entity-level metrics of Precision (P), Recall (R), and their F1 value in our experiments, treating one tagged entity as correct only when it matches the gold entity exactly."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1801.05147",
+    "question_id": "2df4a045a9cd7b44874340b6fdf9308d3c55327a",
+    "question": "What crowdsourcing platform is used?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Unanswerable",
+      "They did not use any platform, instead they hired undergraduate students to do the annotation."
+    ],
+    "generated_answer": "Amazon Mechanical Turk.",
+    "retrieved_chunk_ids": [
+      84,
+      79,
+      10
+    ],
+    "retrieved_contexts": [
+      "Main Results\nIn this section, we show the model performances of our proposed crowdsourcing learning system (ALCrowd), and meanwhile compare it with the other systems mentioned above. Table 2 shows the experimental results on the DL-PS datasets and Table 3 shows the experiment results on the EC-MT and EC-UQ datasets, respectively.",
+      "Comparison Systems\nCRF-MA: The CRF model proposed by BIBREF3 rodrigues2014sequence, which uses a prior distributation to model multiple crowdsourcing annotators. We use the source code provided by the authors.",
+      "Related Work\nCrowdsourcing. Most NLP tasks require a massive amount of labeled training data which are annotated by experts. However, hiring experts is costly and non-scalable, both in terms of time and money. Instead, crowdsourcing is another solution to obtain labeled data at a lower cost but with relative lower quality than those from experts. BIBREF18 snow2008cheap collected labeled results for several NLP tasks from Amazon Mechanical Turk and demonstrated that non-experts annotations were quite useful for training new systems. In recent years, a series of work have focused on how to use crowdsourcing data efficiently in tasks such as classification BIBREF19 , BIBREF20 , and compare quality of crowd and expert labels BIBREF21 ."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "Amazon Mechanical Turk.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1811.00383",
+    "question_id": "a313e98994fc039a82aa2447c411dda92c65a470",
+    "question": "How do they match words before reordering them?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Unanswerable",
+      "CFILT-preorder system"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      18,
+      11,
+      8
+    ],
+    "retrieved_contexts": [
+      "Network\nWe use the CFILT-preorder system for reordering English sentences to match the Indian language word order. It contains two re-ordering systems: (1) generic rules that apply to all Indian languages BIBREF17 , and (2) hindi-tuned rules which improve the generic rules by incorporating improvements found through an error analysis of English-Hindi reordering BIBREF28 . These Hindi-tuned rules have been found to improve reordering for many English to Indian language pairs BIBREF29 .",
+      "Proposed Solution\nFor instance, consider the English sentence Anurag will meet Thakur. One of the pre-ordering rule swaps the position of the noun phrase followed by a transitive verb with the transitive verb. The original and the resulting re-ordered parse tree will be as shown in the Table TABREF5 . Applying this reordering rule to the above sentence Anurag will meet Thakur will yield the reordered sentence Anurag Thakur will meet. Additionally, the Table TABREF5 shows the parse trees for the above sentence with and without pre-ordering.",
+      "Use of Pre-ordering\nPre-ordering the source language sentences to match the target language word order has been useful in addressing word-order divergence for Phrase-Based SMT BIBREF16 , BIBREF17 , BIBREF18 , BIBREF19 . Recently, BIBREF20 proposed a way to measure and reduce the divergence between the source and target languages based on morphological and syntactic properties, also termed as anisomorphism. They demonstrated that by reducing the anisomorphism between the source and target languages, consistent improvements in NMT performance were obtained. The NMT system used additional features like word forms, POS tags and dependency relations in addition to parallel corpora. On the other hand, BIBREF21 observed a drop in performance due to pre-ordering for NMT. Unlike BIBREF20 , the NMT system was trained on pre-ordered sentences and no additional features were provided to the system. Note that all these works address source-target divergence, not divergence between source languages in multilingual NMT."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1811.00383",
+    "question_id": "37861be6aecd9242c4fdccdfcd06e48f3f1f8f81",
+    "question": "On how many language pairs do they show that preordering assisting language sentences helps translation quality?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "5",
+      "Bengali, Gujarati, Marathi, Malayalam and Tamil are the primary source languages, and translation from these to Hindi constitute the child tasks."
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      22,
+      5,
+      10
+    ],
+    "retrieved_contexts": [
+      "Conclusion\nIn this paper, we show that handling word-order divergence between source and assisting languages is crucial for the success of multilingual NMT in an extremely low-resource setting. We show that pre-ordering the assisting language to match the word order of the source language significantly improves translation quality in an extremely low-resource setting. While the current work focused on Indian languages, we would like to validate the hypothesis on a more diverse set of languages.",
+      "Introduction\nTo address this word order divergence, we propose to pre-order the assisting language sentences to match the word order of the source language. We consider an extremely resource constrained scenario, where we do not have any parallel corpus for the child task. We are limited to a bilingual dictionary for transfer information from the assisting to the source language. From our experiments, we show that there is a significant increase in the translation accuracy for the unseen source-target language pair.",
+      "Proposed Solution\nSince the source language and the assisting language (English) have different word order, we hypothesize that it leads to inconsistencies in the contextual representations generated by the encoder for the two languages. In this paper, we propose to pre-order English sentences (assisting language sentences) to match the word-order of the source language and train the parent model on this pre-ordered corpus. In our experiments, we look at scenarios where the assisting language has SVO word order and the source language has SOV word order."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1811.00383",
+    "question_id": "7e62a53823aba08bc26b2812db016f5ce6159565",
+    "question": "Which dataset(s) do they experiment with?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "IITB English-Hindi parallel corpus BIBREF22 ILCI English-Hindi parallel corpus",
+      "IITB English-Hindi parallel corpus ILCI English-Hindi parallel corpus"
+    ],
+    "generated_answer": "They use the IITB English‑Hindi parallel corpus and the ILCI English‑Hindi parallel corpus (with the IITB 520‑sentence dev set and ILCI test sentences).",
+    "retrieved_chunk_ids": [
+      13,
+      15,
+      19
+    ],
+    "retrieved_contexts": [
+      "Experimental Setup\nIn this section, we describe the languages experimented with, datasets used, the network hyper-parameters used in our experiments.",
+      "Datasets\nFor training English-Hindi NMT systems, we use the IITB English-Hindi parallel corpus BIBREF22 ( INLINEFORM0 sentences from the training set) and the ILCI English-Hindi parallel corpus ( INLINEFORM1 sentences). The ILCI (Indian Language Corpora Initiative) multilingual parallel corpus BIBREF23 spans multiple Indian languages from the health and tourism domains. We use the 520-sentence dev-set of the IITB parallel corpus for validation. For each child task, we use INLINEFORM2 sentences from ILCI corpus as the test set.",
+      "Results\nIn this section, we describe the results from our experiments on NMT task. We report the results on X-Hindi pair, where X is one of Bengali, Gujarati, Marathi, Tamil, and Malayalam. The results are presented in the Table TABREF6 . We report BLEU scores and LeBLEU scores BIBREF30 . We observe that both the pre-ordering configurations significantly improve the BLEU scores over the baseline scores. We observe larger gains when generic pre-ordering rules are used compared to the Hindi-tuned pre-ordering rules."
+    ],
+    "reference_token_f1": 0.5555555555555556,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They use the IITB English‑Hindi parallel corpus and the ILCI English‑Hindi parallel corpus (with the IITB 520‑sentence dev set and ILCI test sentences).",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1909.09067",
+    "question_id": "9eabb54c2408dac24f00f92cf1061258c7ea2e1a",
+    "question": "Which information about text structure is included in the corpus?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "paragraphs lines Information on physical page segmentation (for PDFs only), paragraph segmentation, and line segmentation",
+      "paragraph, lines, textspan element (paragraph segmentation, line segmentation, Information on physical page segmentation(for PDF only))"
+    ],
+    "generated_answer": "The corpus includes annotations of text structure.",
+    "retrieved_chunk_ids": [
+      29,
+      12,
+      34
+    ],
+    "retrieved_contexts": [
+      "Building a Corpus for Automatic Readability Assessment and Automatic Text Simplification of German ::: Metadata\ntype: nature or genre of the content of the document, which, in accordance with the DCMI Type Vocabulary, is Text in all cases and additionally StillImage in cases where a document also contains images. Additionally, the linguistic type is specified according to the OLAC Linguistic Data Type Vocabulary, as either primary_text (applies to most documents) or lexicon in cases where a document represents an entry of a simplified language vocabulary",
+      "Building a Corpus for Automatic Readability Assessment and Automatic Text Simplification of German\nThe corpus newly contains information on text structure, typography, and images.",
+      "Building a Corpus for Automatic Readability Assessment and Automatic Text Simplification of German ::: Secondary Data\nThe following types of annotations were added: text structure, fonts, images, tokens, parts of speech, morphological units, lemmas, sentences, and dependency parses. TCF does not readily accommodate the incorporation of all of these types of information. We therefore extended the format in the following ways:"
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The corpus includes annotations of text structure.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1909.09067",
+    "question_id": "3d013f15796ae7fed5272183a166c45f16e24e39",
+    "question": "Which information about typography is included in the corpus?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "font type font style Information on the font type and font style (e.g., italics, bold print) of a token and its position on the physical page",
+      "font type and font style (e.g., italics, bold print) of a token and its position on the physical page (for PDFs only) was specified as attributes to the token elements of the tokens layer A separate fonts layer was introduced to preserve detailed information on the font configurations referenced in the tokens layer"
+    ],
+    "generated_answer": "The corpus records the font type and font style (e.g., italics, bold) of each token, as well as the token’s position on the physical page (for PDF documents).",
+    "retrieved_chunk_ids": [
+      35,
+      12,
+      29
+    ],
+    "retrieved_contexts": [
+      "Building a Corpus for Automatic Readability Assessment and Automatic Text Simplification of German ::: Secondary Data\nInformation on the font type and font style (e.g., italics, bold print) of a token and its position on the physical page (for PDFs only) was specified as attributes to the token elements of the tokens layer (cf. Figure FIGREF34 for an example)",
+      "Building a Corpus for Automatic Readability Assessment and Automatic Text Simplification of German\nThe corpus newly contains information on text structure, typography, and images.",
+      "Building a Corpus for Automatic Readability Assessment and Automatic Text Simplification of German ::: Metadata\ntype: nature or genre of the content of the document, which, in accordance with the DCMI Type Vocabulary, is Text in all cases and additionally StillImage in cases where a document also contains images. Additionally, the linguistic type is specified according to the OLAC Linguistic Data Type Vocabulary, as either primary_text (applies to most documents) or lexicon in cases where a document represents an entry of a simplified language vocabulary"
+    ],
+    "reference_token_f1": 0.5964912280701755,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The corpus records the font type and font style (e.g., italics, bold) of each token, as well as the token’s position on the physical page (for PDF documents).",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1704.06194",
+    "question_id": "9ee07edc371e014df686ced4fb0c3a7b9ce3d5dc",
+    "question": "On which benchmarks they achieve the state of the art?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "SimpleQuestions WebQSP",
+      "WebQSP SimpleQuestions"
+    ],
+    "generated_answer": "They achieve state‑of‑the‑art performance on the WebQSP and SimpleQuestions benchmarks.",
+    "retrieved_chunk_ids": [
+      41,
+      16,
+      50
+    ],
+    "retrieved_contexts": [
+      "Task Introduction & Settings\nWe tune the following hyper-parameters on development sets: (1) the size of hidden states for LSTMs ({50, 100, 200, 400}); (2) learning rate ({0.1, 0.5, 1.0, 2.0}); (3) whether the shortcut connections are between hidden states or between max-pooling results (see Section \"Hierarchical Matching between Relation and Question\" ); and (4) the number of training epochs.",
+      "Hierarchical Matching between Relation and Question\nWe could perform the above hierarchical matching by computing the similarity between each layer of $\\mathbf {\\Gamma }$ and $\\mathbf {h}^r$ separately and doing the (weighted) sum between the two scores. However this does not give significant improvement (see Table 2 ). Our analysis in Section \"Relation Detection Results\" shows that this naive method suffers from the training difficulty, evidenced by that the converged training loss of this model is much higher than that of a single-layer baseline model. This is mainly because (1) Deep BiLSTMs do not guarantee that the two-levels of question hidden representations are comparable, the training usually falls to local optima where one layer has good matching scores and the other always has weight close to 0. (2) The training of deeper architectures itself is more difficult.",
+      "KBQA End-Task Results\nTable 3 compares our system with two published baselines (1) STAGG BIBREF4 , the state-of-the-art on WebQSP and (2) AMPCNN BIBREF20 , the state-of-the-art on SimpleQuestions. Since these two baselines are specially designed/tuned for one particular dataset, they do not generalize well when applied to the other dataset. In order to highlight the effect of different relation detection models on the KBQA end-task, we also implemented another baseline that uses our KBQA system but replaces HR-BiLSTM with our implementation of AMPCNN (for SimpleQuestions) or the char-3-gram BiCNN (for WebQSP) relation detectors (second block in Table 3 )."
+    ],
+    "reference_token_f1": 0.2666666666666667,
+    "faithfulness_score": 0.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They achieve state‑of‑the‑art performance on the WebQSP and SimpleQuestions benchmarks.",
+        "supported": false
+      }
+    ]
+  },
+  {
+    "paper_id": "1704.06194",
+    "question_id": "d3aa0449708cc861a51551b128d73e11d62207d2",
+    "question": "What they use in their propsoed framework?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "break the relation names into word sequences  relation-level and word-level relation representations bidirectional LSTMs (BiLSTMs)  residual learning method",
+      "break the relation names into word sequences for question-relation matching build both relation-level and word-level relation representations use deep bidirectional LSTMs (BiLSTMs) to learn different levels of question representations residual learning method for sequence matching a simple KBQA implementation composed of two-step relation detection"
+    ],
+    "generated_answer": "They use an existing entity linker to generate the top‑K candidate entities for a question, then apply relation detection (including entity re‑ranking) within their framework.",
+    "retrieved_chunk_ids": [
+      24,
+      38,
+      28
+    ],
+    "retrieved_contexts": [
+      "KBQA Enhanced by Relation Detection\nFollowing previous work BIBREF4 , BIBREF5 , our KBQA system takes an existing entity linker to produce the top- $K$ linked entities, $EL_K(q)$ , for a question $q$ (“initial entity linking”). Then we generate the KB queries for $q$ following the four steps illustrated in Algorithm \"KBQA Enhanced by Relation Detection\" .",
+      "Task Introduction & Settings\nWe use the SimpleQuestions BIBREF2 and WebQSP BIBREF25 datasets. Each question in these datasets is labeled with the gold semantic parse. Hence we can directly evaluate relation detection performance independently as well as evaluate on the KBQA end task.",
+      "KBQA Enhanced by Relation Detection\nSections \"Entity Re-Ranking\" and \"Relation Detection\" elaborate how our relation detection help to re-rank entities in the initial entity linking, and then those re-ranked entities enable more accurate relation detection. The KBQA end task, as a result, benefits from this process."
+    ],
+    "reference_token_f1": 0.21333333333333335,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They use an existing entity linker to generate the top‑K candidate entities for a question.",
+        "supported": true
+      },
+      {
+        "claim": "They then apply relation detection (including entity re‑ranking) within their framework.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1704.06194",
+    "question_id": "cfbec1ef032ac968560a7c76dec70faf1269b27c",
+    "question": "What does KBQA abbreviate for",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Knowledge Base Question Answering",
+      "Knowledge Base Question Answering "
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      24,
+      28,
+      23
+    ],
+    "retrieved_contexts": [
+      "KBQA Enhanced by Relation Detection\nFollowing previous work BIBREF4 , BIBREF5 , our KBQA system takes an existing entity linker to produce the top- $K$ linked entities, $EL_K(q)$ , for a question $q$ (“initial entity linking”). Then we generate the KB queries for $q$ following the four steps illustrated in Algorithm \"KBQA Enhanced by Relation Detection\" .",
+      "KBQA Enhanced by Relation Detection\nSections \"Entity Re-Ranking\" and \"Relation Detection\" elaborate how our relation detection help to re-rank entities in the initial entity linking, and then those re-ranked entities enable more accurate relation detection. The KBQA end task, as a result, benefits from this process.",
+      "KBQA Enhanced by Relation Detection\nThis section describes our KBQA pipeline system. We make minimal efforts beyond the training of the relation detection model, making the whole system easy to build."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1704.06194",
+    "question_id": "c0e341c4d2253eb42c8840381b082aae274eddad",
+    "question": "What is te core component for KBQA?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "answer questions by obtaining information from KB tuples ",
+      "hierarchical matching between questions and relations with residual learning"
+    ],
+    "generated_answer": "The core component of the KBQA system is its relation‑detection model.",
+    "retrieved_chunk_ids": [
+      28,
+      24,
+      23
+    ],
+    "retrieved_contexts": [
+      "KBQA Enhanced by Relation Detection\nSections \"Entity Re-Ranking\" and \"Relation Detection\" elaborate how our relation detection help to re-rank entities in the initial entity linking, and then those re-ranked entities enable more accurate relation detection. The KBQA end task, as a result, benefits from this process.",
+      "KBQA Enhanced by Relation Detection\nFollowing previous work BIBREF4 , BIBREF5 , our KBQA system takes an existing entity linker to produce the top- $K$ linked entities, $EL_K(q)$ , for a question $q$ (“initial entity linking”). Then we generate the KB queries for $q$ following the four steps illustrated in Algorithm \"KBQA Enhanced by Relation Detection\" .",
+      "KBQA Enhanced by Relation Detection\nThis section describes our KBQA pipeline system. We make minimal efforts beyond the training of the relation detection model, making the whole system easy to build."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The core component of the KBQA system is its relation‑detection model.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1909.00512",
+    "question_id": "1ec152119cf756b16191b236c85522afeed11f59",
+    "question": "What experiments are proposed to test that upper layers produce context-specific embeddings?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "They measure self-similarity, intra-sentence similarity and maximum explainable variance of the embeddings in the upper layers.",
+      "They plot the average cosine similarity between uniformly random words increases exponentially from layers 8 through 12.  \nThey plot the average self-similarity of uniformly randomly sampled words in each layer of BERT, ELMo, and GPT-2 and shown that the higher layer produces more context-specific embeddings.\nThey plot that word representations in a sentence become more context-specific in upper layers, they drift away from one another."
+    ],
+    "generated_answer": "The authors propose measuring (1) the cosine similarity of a word’s contextualized representations across different contexts versus the similarity between different words, and (2) the proportion of variance in those representations that can be explained by a static embedding (the MEV metric) for each layer. Observing lower self‑similarity and <5 % variance explained in the upper layers would indicate that those layers produce more context‑specific embeddings.",
+    "retrieved_chunk_ids": [
+      21,
+      0,
+      7
+    ],
+    "retrieved_contexts": [
+      "Approach ::: Measures of Contextuality ::: Definition 3\n$\\textit {MEV}_\\ell (w)$ is the proportion of variance in $w$'s contextualized representations for a given layer that can be explained by their first principal component. It gives us an upper bound on how well a static embedding could replace a word's contextualized representations. The closer $\\textit {MEV}_\\ell (w)$ is to 0, the poorer a replacement a static embedding would be; if $\\textit {MEV}_\\ell (w) = 1$, then a static embedding would be a perfect replacement for the contextualized representations.",
+      "Replacing static word embeddings with contextualized word representations has yielded significant improvements on many NLP tasks. However, just how contextual are the contextualized representations produced by models such as ELMo and BERT? Are there infinitely many context-specific representations for each word, or are words essentially assigned one of a finite number of word-sense representations? For one, we find that the contextualized representations of all words are not isotropic in any layer of the contextualizing model. While representations of the same word in different contexts still have a greater cosine similarity than those of two different words, this self-similarity is much lower in upper layers. This suggests that upper layers of contextualizing models produce more context-specific representations, much like how upper layers of LSTMs produce more task-specific representations. In all layers of ELMo, BERT, and GPT-2, on average, less than 5% of the variance in a word's contextualized representations can be explained by a static embedding for that word, providing some justification for the success of contextualized representations.",
+      "Introduction\nAfter adjusting for the effect of anisotropy, on average, less than 5% of the variance in a word's contextualized representations can be explained by their first principal component. This holds across all layers of all models. This suggests that contextualized representations do not correspond to a finite number of word-sense representations, and even in the best possible scenario, static embeddings would be a poor replacement for contextualized ones. Still, static embeddings created by taking the first principal component of a word's contextualized representations outperform GloVe and FastText embeddings on many word vector benchmarks."
+    ],
+    "reference_token_f1": 0.43795620437956206,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The authors propose measuring the cosine similarity of a word’s contextualized representations across different contexts versus the similarity between different words.",
+        "supported": true
+      },
+      {
+        "claim": "The authors propose measuring the proportion of variance in those representations that can be explained by a static embedding (the MEV metric) for each layer.",
+        "supported": true
+      },
+      {
+        "claim": "Observing lower self‑similarity and <5 % variance explained in the upper layers would indicate that those layers produce more context‑specific embeddings.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1909.00512",
+    "question_id": "891c2001d6baaaf0da4e65b647402acac621a7d2",
+    "question": "How do they calculate a static embedding for each word?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "They use the first principal component of a word's contextualized representation in a given layer as its static embedding.",
+      " by taking the first principal component (PC) of its contextualized representations in a given layer"
+    ],
+    "generated_answer": "They compute a word’s static embedding by gathering its contextualized representations, performing PCA on them, and using the first principal component (the top eigenvector) as the static vector.",
+    "retrieved_chunk_ids": [
+      7,
+      37,
+      9
+    ],
+    "retrieved_contexts": [
+      "Introduction\nAfter adjusting for the effect of anisotropy, on average, less than 5% of the variance in a word's contextualized representations can be explained by their first principal component. This holds across all layers of all models. This suggests that contextualized representations do not correspond to a finite number of word-sense representations, and even in the best possible scenario, static embeddings would be a poor replacement for contextualized ones. Still, static embeddings created by taking the first principal component of a word's contextualized representations outperform GloVe and FastText embeddings on many word vector benchmarks.",
+      "Findings ::: Static vs. Contextualized ::: On average, less than 5% of the variance in a word's contextualized representations can be explained by a static embedding.\nRecall from Definition 3 that the maximum explainable variance (MEV) of a word, for a given layer of a given model, is the proportion of variance in its contextualized representations that can be explained by their first principal component. This gives us an upper bound on how well a static embedding could replace a word's contextualized representations. Because contextualized representations are anisotropic (see section SECREF21), much of the variation across all words can be explained by a single vector. We adjust for anisotropy by calculating the proportion of variance explained by the first principal component of uniformly randomly sampled word representations and subtracting this proportion from the raw MEV. In Figure FIGREF29, we plot the average anisotropy-adjusted MEV across uniformly randomly sampled words.",
+      "Related Work ::: Static Word Embeddings\nSkip-gram with negative sampling (SGNS) BIBREF0 and GloVe BIBREF1 are among the best known models for generating static word embeddings. Though they learn embeddings iteratively in practice, it has been proven that in theory, they both implicitly factorize a word-context matrix containing a co-occurrence statistic BIBREF7, BIBREF8. Because they create a single representation for each word, a notable problem with static word embeddings is that all senses of a polysemous word must share a single vector."
+    ],
+    "reference_token_f1": 0.5306122448979592,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They compute a word’s static embedding by gathering its contextualized representations, performing PCA on them, and using the first principal component (the top eigenvector) as the static vector.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "2003.03106",
+    "question_id": "66c96c297c2cffdf5013bab5e95b59101cb38655",
+    "question": "What is the performance of BERT on the task?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "F1 scores are:\nHUBES-PHI: Detection(0.965), Classification relaxed (0.95), Classification strict (0.937)\nMedoccan: Detection(0.972), Classification (0.967)",
+      "BERT remains only 0.3 F1-score points behind, and would have achieved the second position among all the MEDDOCAN shared task competitors. Taking into account that only 3% of the gold labels remain incorrectly annotated  Table "
+    ],
+    "generated_answer": "BERT achieved a recall of 0.979 on the detection task, with an F1‑score about 1.9 points higher than the next best system and a recall roughly 5 points above the other competitors.",
+    "retrieved_chunk_ids": [
+      23,
+      58,
+      56
+    ],
+    "retrieved_contexts": [
+      "Materials and Methods ::: Systems\nApart from experimenting with a pre-trained BERT model, we have run experiments with other systems and baselines, to compare them and obtain a better perspective about BERT's performance in these datasets.",
+      "Results ::: Experiment A: NUBes-PHI\nTo finish with this experiment set, Table also shows the strict classification precision, recall and F1-score for the compared systems. Despite the fact that, in general, the systems obtain high values, BERT outperforms them again. BERT's F1-score is 1.9 points higher than the next most competitive result in the comparison. More remarkably, the recall obtained by BERT is about 5 points above.",
+      "Results ::: Experiment A: NUBes-PHI\nRegarding the detection scenario –that is, the scenario concerned with a binary classification to determine whether each individual token conveys sensitive information or not–, it can be observed that BERT outperforms its competitors. A fact worth highlighting is that, according to these results, BERT achieves a precision lower than the rest of the systems (i.e., it makes more false positive predictions); in exchange, it obtains a remarkably higher recall. Noticeably, it reaches a recall of 0.979, improving by more than 4 points the second-best system, spaCy."
+    ],
+    "reference_token_f1": 0.36111111111111116,
+    "faithfulness_score": 0.6666666666666666,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "BERT achieved a recall of 0.979 on the detection task.",
+        "supported": true
+      },
+      {
+        "claim": "BERT's F1-score was about 1.9 points higher than the next best system.",
+        "supported": true
+      },
+      {
+        "claim": "BERT's recall was roughly 5 points above the other competitors.",
+        "supported": false
+      }
+    ]
+  },
+  {
+    "paper_id": "2003.03106",
+    "question_id": "6b53e1f46ae4ba9b75117fc6e593abded89366be",
+    "question": "What are the other algorithms tested?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "NER model CRF classifier trained with sklearn-crfsuite classifier has been developed that consists of regular-expressions and dictionary look-up",
+      "As the simplest baseline, a sensitive data recogniser and classifier Conditional Random Fields (CRF) spaCy "
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      40,
+      45,
+      47
+    ],
+    "retrieved_contexts": [
+      "Materials and Methods ::: Systems ::: BERT\nThe experiments were run on a 64-core server with operating system Ubuntu 16.04, 250GB of RAM memory, and 4 GeForce RTX 2080 GPUs with 11GB of memory. The maximum sequence length was set at 500 and the batch size at 12. In this setting, each epoch –a full pass through all the training data– required about 10 minutes to complete.",
+      "Materials and Methods ::: Experimental design ::: Experiment A: NUBes-PHI\n- We measure the performance of the systems at predicting the sensitive information type of each token –i.e., the 11 categories presented in Section SECREF5 or `out'. Detecting entity types correctly is important if a system is going to be used to replace sensitive data by fake data of the same type (e.g., random people names).",
+      "Materials and Methods ::: Experimental design ::: Experiment A: NUBes-PHI\nThe systems are evaluated in terms of micro-average precision, recall and F1-score in all the scenarios."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "2003.03106",
+    "question_id": "c0bee6539eb6956a7347daa9d2419b367bd02064",
+    "question": "Does BERT reach the best performance among all the algorithms compared?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "No",
+      "No"
+    ],
+    "generated_answer": "Yes; BERT outperforms the other systems, achieving the highest F1‑score and the highest recall.",
+    "retrieved_chunk_ids": [
+      23,
+      58,
+      56
+    ],
+    "retrieved_contexts": [
+      "Materials and Methods ::: Systems\nApart from experimenting with a pre-trained BERT model, we have run experiments with other systems and baselines, to compare them and obtain a better perspective about BERT's performance in these datasets.",
+      "Results ::: Experiment A: NUBes-PHI\nTo finish with this experiment set, Table also shows the strict classification precision, recall and F1-score for the compared systems. Despite the fact that, in general, the systems obtain high values, BERT outperforms them again. BERT's F1-score is 1.9 points higher than the next most competitive result in the comparison. More remarkably, the recall obtained by BERT is about 5 points above.",
+      "Results ::: Experiment A: NUBes-PHI\nRegarding the detection scenario –that is, the scenario concerned with a binary classification to determine whether each individual token conveys sensitive information or not–, it can be observed that BERT outperforms its competitors. A fact worth highlighting is that, according to these results, BERT achieves a precision lower than the rest of the systems (i.e., it makes more false positive predictions); in exchange, it obtains a remarkably higher recall. Noticeably, it reaches a recall of 0.979, improving by more than 4 points the second-best system, spaCy."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "BERT outperforms the other systems",
+        "supported": true
+      },
+      {
+        "claim": "BERT achieves the highest F1‑score",
+        "supported": true
+      },
+      {
+        "claim": "BERT achieves the highest recall",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "2003.03106",
+    "question_id": "3de0487276bb5961586acc6e9f82934ef8cb668c",
+    "question": "What are the clinical datasets used in the paper?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "MEDDOCAN NUBes-PHI",
+      "MEDDOCAN NUBes "
+    ],
+    "generated_answer": "The paper uses two Spanish clinical‑narrative datasets: the NUBes‑PHI corpus of real medical reports and the MEDDOCAN 2019 shared‑task corpus.",
+    "retrieved_chunk_ids": [
+      16,
+      41,
+      20
+    ],
+    "retrieved_contexts": [
+      "Materials and Methods ::: Data\nTwo datasets are exploited in this article. Both datasets consist of plain text containing clinical narrative written in Spanish, and their respective manual annotations of sensitive information in BRAT BIBREF13 standoff format. In order to feed the data to the different algorithms presented in Section SECREF7, these datasets were transformed to comply with the commonly used BIO sequence representation scheme BIBREF14.",
+      "Materials and Methods ::: Experimental design\nWe have conducted experiments with BERT in the two datasets of Spanish clinical narrative presented in Section SECREF3 The first experiment set uses NUBes-PHI, a corpus of real medical reports manually annotated with sensitive information. Because this corpus is not publicly available, and in order to compare the BERT-based model to other related published systems, the second set of experiments uses the MEDDOCAN 2019 shared task competition dataset. The following sections provide greater detail about the two experimental setups.",
+      "Materials and Methods ::: Data ::: The MEDDOCAN corpus\nThe organisers of the MEDDOCAN shared task BIBREF3 curated a synthetic corpus of clinical cases enriched with sensitive information by health documentalists. In this regard, the MEDDOCAN evaluation scenario could be said to be somewhat far from the real use case the technology developed for the shared task is supposed to be applied in. However, at the moment it also provides the only public means for a rigorous comparison between systems for sensitive health information detection in Spanish texts."
+    ],
+    "reference_token_f1": 0.23076923076923078,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The paper uses two Spanish clinical‑narrative datasets: the NUBes‑PHI corpus of real medical reports and the MEDDOCAN 2019 shared‑task corpus.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1708.01464",
+    "question_id": "113d791df6fcfc9cecfb7b1bebaf32cc2e4402ab",
+    "question": "how is model compactness measured?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Using file size on disk",
+      "15.4 MB"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      37,
+      39,
+      28
+    ],
+    "retrieved_contexts": [
+      "Training\nWe train the LangID and NoLangID versions of our model each on three subsets of the Wiktionary data:",
+      "Training\nLangID-Adapted and NoLangID-Adapted: Trained on data from any of the 229 languages for which they built adapted models. Because many of these languages had no training data at all, the model is actually only trained on data in 157 languages. As is noted above, the Adapted set omits 23 languages which are in the High test set.",
+      "Evaluation\nWe use the following three evaluation metrics:"
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1708.01464",
+    "question_id": "0752d71a0a1f73b3482a888313622ce9e9870d6e",
+    "question": "what was the baseline?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "system presented by deri2016grapheme",
+      "wFST"
+    ],
+    "generated_answer": "The baseline was the system presented by deri2016grapheme, referred to in the results as wFST.",
+    "retrieved_chunk_ids": [
+      28,
+      29,
+      34
+    ],
+    "retrieved_contexts": [
+      "Evaluation\nWe use the following three evaluation metrics:",
+      "Evaluation\nPhoneme Error Rate (PER) is the Levenshtein distance between the predicted phoneme sequences and the gold standard phoneme sequences, divided by the length of the gold standard phoneme sequences.",
+      "Baseline\nResults on LangID and NoLangID are compared to the system presented by deri2016grapheme, which is identified in our results as wFST. Their results can be divided into two parts:"
+    ],
+    "reference_token_f1": 0.4210526315789474,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The baseline was the system presented by deri2016grapheme, referred to in the results as wFST.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1708.01464",
+    "question_id": "55c8f7acbfd4f5cde634aaecd775b3bb32e9ffa3",
+    "question": "what evaluation metrics were used?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Phoneme Error Rate (PER) Word Error Rate (WER) Word Error Rate 100 (WER 100)",
+      "PER WER WER 100"
+    ],
+    "generated_answer": "The evaluation used three metrics: word error rate (WER), WER 100, and phoneme error rate (PER).",
+    "retrieved_chunk_ids": [
+      28,
+      32,
+      29
+    ],
+    "retrieved_contexts": [
+      "Evaluation\nWe use the following three evaluation metrics:",
+      "Evaluation\nIn system evaluations, WER, WER 100, and PER numbers presented for multiple languages are averaged, weighting each language equally BIBREF13 .",
+      "Evaluation\nPhoneme Error Rate (PER) is the Levenshtein distance between the predicted phoneme sequences and the gold standard phoneme sequences, divided by the length of the gold standard phoneme sequences."
+    ],
+    "reference_token_f1": 0.6666666666666666,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The evaluation used three metrics: word error rate (WER), WER 100, and phoneme error rate (PER).",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1708.01464",
+    "question_id": "4eaf9787f51cd7cdc45eb85cf223d752328c6ee4",
+    "question": "what datasets did they use?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "the Carnegie Mellon Pronouncing Dictionary BIBREF12 the multilingual pronunciation corpus collected by deri2016grapheme  ranscriptions extracted from Wiktionary",
+      "multilingual pronunciation corpus collected by deri2016grapheme"
+    ],
+    "generated_answer": "They trained on the data from the 85 languages for which BIBREF13 used non‑adapted wFST models.",
+    "retrieved_chunk_ids": [
+      4,
+      38,
+      34
+    ],
+    "retrieved_contexts": [
+      "Low Resource g2p\nOther low resource g2p systems have used a strategy of combining multiple models. schlippe2014combining trained several data-driven g2p systems on varying quantities of monolingual data and combined their outputs with a phoneme-level voting scheme. This led to improvements over the best-performing single system for small quantities of data in some languages. jyothilow trained recurrent neural networks for small data sets and found that a version of their system that combined the neural network output with the output of the wFST-based Phonetisaurus system BIBREF1 did better than either system alone.",
+      "Training\nLangID-High and NoLangID-High: Trained on data from the 85 languages for which BIBREF13 used non-adapted wFST models.",
+      "Baseline\nResults on LangID and NoLangID are compared to the system presented by deri2016grapheme, which is identified in our results as wFST. Their results can be divided into two parts:"
+    ],
+    "reference_token_f1": 0.17647058823529413,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They trained on the data from the 85 languages for which BIBREF13 used non‑adapted wFST models.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "2002.03407",
+    "question_id": "fb2b536dc8e442dffab408db992b971e86548158",
+    "question": "What is the interannotator agreement for the human evaluation?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Unanswerable",
+      "Unanswerable"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      36,
+      41,
+      15
+    ],
+    "retrieved_contexts": [
+      "Results\nROUGE Evaluation Results.",
+      "Results\nHuman Evaluation Results. While automated evaluation metrics like ROUGE measure lexical similarity between machine and human summaries, humans can better measure how coherent and readable a summary is. Our evaluation study investigates whether tuning the PG-net model increases summary coherence, by asking evaluators to select which of three summaries for the same document they like most: the PG-net model trained on CNN/DM; the model trained on student reflections; and finally the model trained on CNN/DM and tuned on student reflections. 20 evaluators were recruited from our institution and asked to each perform 20 annotations. Summaries are presented to evaluators in random order. Evaluators are then asked to select the summary they feel to be most readable and coherent. Unlike ROUGE, which measures the coverage of a generated summary relative to a reference summary, our evaluators don't read the reflections or reference summary. They choose the summary that is most coherent and readable, regardless of the source of the summary. For both courses, the majority of selected summaries were produced by the tuned model (49% for CS and 41% for Stat2015), compared to (31% for CS and 30.9% for Stat2015) for CNN/DM model, and (19.7% for CS and 28.5% for Stat2015) for student reflections model. These results again suggest that domain transfer can remedy the size of in-domain data and improve performance.",
+      "Proposed Template-Based Synthesis Model\n4. Summary selection: After producing candidate summaries, we need to pick the best ones. We argue that the best candidates are those that are coherent and also convey the same meaning as the original human summary. We thus use a hybrid metric to score candidates, where the metric is a weighted sum of two scores and is calculated using Equations 1, 2, and 3. Eq.1 measures coherency using a language model (LM), Eq.2 measures how close a candidate is to a human summary using ROUGE scores, while Eq.3 picks the highest scored $N$ candidates as the final synthetic set."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "2002.03407",
+    "question_id": "31735ec3d83c40b79d11df5c34154849aeb3fb47",
+    "question": "Who were the human evaluators used?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "20 evaluators were recruited from our institution and asked to each perform 20 annotations",
+      "20 annotatos from author's institution"
+    ],
+    "generated_answer": "The human evaluators were 20 participants recruited from the authors’ institution.",
+    "retrieved_chunk_ids": [
+      36,
+      41,
+      15
+    ],
+    "retrieved_contexts": [
+      "Results\nROUGE Evaluation Results.",
+      "Results\nHuman Evaluation Results. While automated evaluation metrics like ROUGE measure lexical similarity between machine and human summaries, humans can better measure how coherent and readable a summary is. Our evaluation study investigates whether tuning the PG-net model increases summary coherence, by asking evaluators to select which of three summaries for the same document they like most: the PG-net model trained on CNN/DM; the model trained on student reflections; and finally the model trained on CNN/DM and tuned on student reflections. 20 evaluators were recruited from our institution and asked to each perform 20 annotations. Summaries are presented to evaluators in random order. Evaluators are then asked to select the summary they feel to be most readable and coherent. Unlike ROUGE, which measures the coverage of a generated summary relative to a reference summary, our evaluators don't read the reflections or reference summary. They choose the summary that is most coherent and readable, regardless of the source of the summary. For both courses, the majority of selected summaries were produced by the tuned model (49% for CS and 41% for Stat2015), compared to (31% for CS and 30.9% for Stat2015) for CNN/DM model, and (19.7% for CS and 28.5% for Stat2015) for student reflections model. These results again suggest that domain transfer can remedy the size of in-domain data and improve performance.",
+      "Proposed Template-Based Synthesis Model\n4. Summary selection: After producing candidate summaries, we need to pick the best ones. We argue that the best candidates are those that are coherent and also convey the same meaning as the original human summary. We thus use a hybrid metric to score candidates, where the metric is a weighted sum of two scores and is calculated using Equations 1, 2, and 3. Eq.1 measures coherency using a language model (LM), Eq.2 measures how close a candidate is to a human summary using ROUGE scores, while Eq.3 picks the highest scored $N$ candidates as the final synthetic set."
+    ],
+    "reference_token_f1": 0.4799999999999999,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The human evaluators were 20 participants recruited from the authors’ institution.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "2002.03407",
+    "question_id": "10d450960907091f13e0be55f40bcb96f44dd074",
+    "question": "Is the template-based model realistic?  ",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Yes",
+      "Yes"
+    ],
+    "generated_answer": "Yes. The proposed template‑based synthesis model is described as feasible to build with little or no training—templates can be extracted manually or automatically, clustered, and then populated with keywords or snippets using simple modules—making it a realistic approach for resource‑limited domains.",
+    "retrieved_chunk_ids": [
+      11,
+      19,
+      10
+    ],
+    "retrieved_contexts": [
+      "Proposed Template-Based Synthesis Model\nModel Structure. The model consists of 4 modules:",
+      "Proposed Template-Based Synthesis Model\n2. Templates are then passed to the clustering module, producing a set of clusters. Each cluster $C$ contains a number of similar templates.",
+      "Proposed Template-Based Synthesis Model\nOur motivation for using templates for data synthesis is that seq2seq synthesis models (as discussed in related work) tend to generate irrelevant and repeated words BIBREF17, while templates can produce more coherent and concise output. Also, extracting templates can be done either manually or automatically typically by training a few parameters or even doing no training, then external information in the form of keywords or snippets can be populated into the templates with the help of more sophisticated models. Accordingly, using templates can be very tempting for domains with limited resources such as ours."
+    ],
+    "reference_token_f1": 0.04347826086956522,
+    "faithfulness_score": 0.8,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The proposed template‑based synthesis model is described as feasible to build with little or no training.",
+        "supported": true
+      },
+      {
+        "claim": "Templates can be extracted manually or automatically.",
+        "supported": true
+      },
+      {
+        "claim": "Templates are clustered.",
+        "supported": true
+      },
+      {
+        "claim": "Templates can then be populated with keywords or snippets using simple modules.",
+        "supported": false
+      },
+      {
+        "claim": "This makes it a realistic approach for resource‑limited domains.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "2002.03407",
+    "question_id": "b5608076d91450b0d295ad14c3e3a90d7e168d0e",
+    "question": "Is the student reflection data very different from the newspaper data?  ",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Yes",
+      "Yes"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      7,
+      0,
+      8
+    ],
+    "retrieved_contexts": [
+      "Reflection Summarization Dataset\nStudent reflections are comments provided by students in response to a set of instructor prompts. The prompts are directed towards gathering students' feedback on course material. Student reflections are collected directly following each of a set of classroom lectures over a semester. In this paper, the set of reflections for each prompt in each lecture is considered a student reflection document. The objective of our work is to provide a comprehensive and meaningful abstractive summary of each student reflection document. Our dataset consists of documents and summaries from four course instantiations: ENGR (Introduction to Materials Science and Engineering), Stat2015 and Stat2016 (Statistics for Industrial Engineers, taught in 2015 and 2016, respectively), and CS (Data Structures in Computer Science). All reflections were collected in response to two pedagogically-motivated prompts BIBREF16: “Point of Interest (POI): Describe what you found most interesting in today's class” and “Muddiest Point (MP): Describe what was confusing or needed more detail.”",
+      "Training abstractive summarization models typically requires large amounts of data, which can be a limitation for many domains. In this paper we explore using domain transfer and data synthesis to improve the performance of recent abstractive summarization methods when applied to small corpora of student reflections. First, we explored whether tuning state of the art model trained on newspaper data could boost performance on student reflection data. Evaluations demonstrated that summaries produced by the tuned model achieved higher ROUGE scores compared to model trained on just student reflection data or just newspaper data. The tuned model also achieved higher scores compared to extractive summarization baselines, and additionally was judged to produce more coherent and readable summaries in human evaluations. Second, we explored whether synthesizing summaries of student data could additionally boost performance. We proposed a template-based model to synthesize new data, which when incorporated into training further increased ROUGE scores. Finally, we showed that combining data synthesis with domain transfer achieved higher ROUGE scores compared to only using one of the two approaches.",
+      "Reflection Summarization Dataset\nFor each reflection document, at least one human (either a TA or domain expert) created summaries. Table TABREF4 shows example reference summary produced by one annotator for the CS course. Table TABREF5 summarizes the dataset in terms of number of lectures, number of prompts per lecture, average number of reflections per prompt, and number of abstractive reference summaries for each set of reflections."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "2002.03407",
+    "question_id": "c21b87c97d1afac85ece2450ee76d01c946de668",
+    "question": "What is the recent abstractive summarization method in this paper?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "pointer networks with coverage mechanism (PG-net)",
+      " pointer networks with coverage mechanism (PG-net)BIBREF0"
+    ],
+    "generated_answer": "The paper’s recent abstractive summarization method is a neural abstractive summarization model.",
+    "retrieved_chunk_ids": [
+      5,
+      2,
+      3
+    ],
+    "retrieved_contexts": [
+      "Related Work\nIn a different approach to abstractive summarization, BIBREF11 developed a soft template based neural method consisting of an end-to-end deep model for template retrieval, reranking and summary rewriting. While we also develop a template based model, our work differs in both model structure and purpose.",
+      "Introduction\nTo improve performance in low resource domains, we explore three directions. First, we explore domain transfer for abstractive summarization. While domain transfer is not new, compared to prior summarization studies BIBREF6, BIBREF7, our training (news) and tuning (student reflection) domains are quite dissimilar, and the in-domain data is small. Second, we propose a template-based synthesis method to create synthesized summaries, then explore the effect of enriching training data for abstractive summarization using the proposed model compared to a synthesis baseline. Lastly, we combine both directions. Evaluations of neural abstractive summarization method across four student reflection corpora show the utility of all three methods.",
+      "Related Work\nAbstractive Summarization. Abstractive summarization aims to generate coherent summaries with high readability, and has seen increasing interest and improved performance due to the emergence of seq2seq models BIBREF8 and attention mechanisms BIBREF9. For example, BIBREF0, BIBREF2, and BIBREF1 in addition to using encoder-decoder model with attention, they used pointer networks to solve the out of vocabulary issue, while BIBREF0 used coverage mechanism to solve the problem of word repetition. In addition, BIBREF2 and BIBREF10 used reinforcement learning in an end-to-end setting."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": 0.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The paper’s recent abstractive summarization method is a neural abstractive summarization model.",
+        "supported": false
+      }
+    ]
+  },
+  {
+    "paper_id": "1909.11687",
+    "question_id": "d087539e6a38c42f0a521ff2173ef42c0733878e",
+    "question": "Why are prior knowledge distillation techniques models are ineffective in producing student models with vocabularies different from the original teacher models?  ",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "While there has been existing work on reducing NLP model vocabulary sizes BIBREF15, distillation techniques cannot utilize these, since they require the student and teacher models to share the same vocabulary and output space. This profoundly limits their potential to further reduce model sizes.",
+      "distillation techniques cannot utilize these, since they require the student and teacher models to share the same vocabulary and output space. This profoundly limits their potential to further reduce model sizes."
+    ],
+    "generated_answer": "Prior knowledge‑distillation methods assume the student and teacher share the same vocabulary and output space. When the student’s vocabulary differs, tokenization changes and the embedding dimensions differ, so the teacher’s and student’s outputs (e.g., masked‑language‑model predictions) no longer align. Because existing KD techniques rely on this alignment, they cannot effectively transfer knowledge to a student with a different vocabulary.",
+    "retrieved_chunk_ids": [
+      4,
+      18,
+      3
+    ],
+    "retrieved_contexts": [
+      "Introduction\nWe present two novel ideas to improve the effectiveness of knowledge distillation, in particular for BERT, with the focus on bringing down model sizes to as much as a few mega-bytes. Our model is among the first to propose to use a significantly smaller vocabulary for the student model learned during distillation. In addition, instead of distilling solely on the teacher model's final-layer outputs, our model leverages layer-wise teacher model parameters to directly optimize the parameters of the corresponding layers in the student model. Specifically, our contributions are:",
+      "Methodology ::: Optimal Subword Embeddings via Knowledge Distillation\nHowever, since the student vocabulary is not a complete subset of the teacher vocabulary, the two vocabularies may tokenize the same words differently. As a result, the outputs of the teacher and student model for the masked language modeling task may not align. Even with the high overlap between the two vocabularies, the need to train the student embedding from scratch, and the change in embedding dimension precludes existing knowledge distillation techniques, which rely on the alignment of both models' output spaces. As a result, we explore two alternative approaches that enable implicit transfer of knowledge to the student model, which we describe below.",
+      "Introduction\nHowever, a significant bottleneck that has been overlooked by previous efforts is the input vocabulary size and its corresponding word embedding matrix, often accounting for a significant proportion of all model parameters. For instance, the embedding table of the BERTBASE model, comprising over 30K WordPiece tokens BIBREF14, accounts for over $21\\%$ of the model size. While there has been existing work on reducing NLP model vocabulary sizes BIBREF15, distillation techniques cannot utilize these, since they require the student and teacher models to share the same vocabulary and output space. This profoundly limits their potential to further reduce model sizes."
+    ],
+    "reference_token_f1": 0.38181818181818183,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "Prior knowledge-distillation methods assume the student and teacher share the same vocabulary and output space.",
+        "supported": true
+      },
+      {
+        "claim": "When the student’s vocabulary differs, tokenization changes and the embedding dimensions differ, so the teacher’s and student’s outputs (e.g., masked-language-model predictions) no longer align.",
+        "supported": true
+      },
+      {
+        "claim": "Because existing KD techniques rely on this alignment, they cannot effectively transfer knowledge to a student with a different vocabulary.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1909.11687",
+    "question_id": "efe9bad55107a6be7704ed97ecce948a8ca7b1d2",
+    "question": "What state-of-the-art compression techniques were used in the comparison?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "baseline without knowledge distillation (termed NoKD) Patient Knowledge Distillation (PKD)",
+      "NoKD PKD BERTBASE teacher model"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      9,
+      8,
+      43
+    ],
+    "retrieved_contexts": [
+      "Related Work\nResearch in neural network model compression has been concomitant with the rise in popularity of neural networks themselves, since these models have often been memory-intensive for the hardware of their time. Work in model compression for NLP applications falls broadly into four categories: matrix approximation, parameter pruning/sharing, weight quantization and knowledge distillation.",
+      "Introduction\nUsing the combination of dual training and shared variable projections, we train a 12-layer highly-compressed student BERT model, achieving a maximum compression ratio of $\\sim $61.94x (with 48 dimension size) compared to the teacher BERTBASE model. We conduct experiments for measuring both generalized language modeling perspective and for downstream tasks, demonstrating competitive performance with high compression ratios for both families of tasks.",
+      "Discussion\nVocabulary size tradeoffs: Issues with input vocabulary size are peculiar to problems in natural language processing: they do not always apply to other areas such as computer vision, where a small fixed number of symbols can encode most inputs. There has been some work on reducing input vocabulary sizes for NLP, but typically not targeting model compression. One concern with reducing the vocabularies of NLP models is it pushes the average tokenized sequence lengths up, making model training harder. In this work, however, we consider classification tasks on shorter texts, which are not as affected by input sequence lengths as, say, tasks such as machine translation are. Furthermore, many real-world applications revolve around short text inputs, which is why a better trade-off between vocabulary size and sequence lengths may be worthwhile for such applications."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1605.06083",
+    "question_id": "71e4ba4e87e6596aeca187127c0d088df6570c57",
+    "question": "What evaluations methods do they take?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Unanswerable",
+      "Unanswerable"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      18,
+      4,
+      29
+    ],
+    "retrieved_contexts": [
+      "Unwarranted inferences\nQuite a few annotations focus on explaining the why of the situation. For example, in image 3963038375 a man is fastening his climbing harness in order to have some fun. And in an extreme case, one annotator writes about a picture of a dancing woman that the school is having a special event in order to show the american culture on how other cultures are dealt with in parties (3636329461). This is reminiscent of the Stereotypic Explanatory Bias BIBREF7 , which refers to “the tendency to provide relatively more explanations in descriptions of stereotype inconsistent, compared to consistent behavior” BIBREF6 . So in theory, odd or surprising situations should receive more explanations, since a description alone may not make enough sense in those cases, but it is beyond the scope of this paper to test whether or not the Flickr30K data suffers from the SEB.",
+      "Introduction\nThis image comes with the five descriptions below. All but the first one contain information that cannot come from the image alone. Relevant parts are highlighted in bold:",
+      "Conclusion\nI have also looked at methods to detect stereotype-driven descriptions, but due to the richness of language it is difficult to find an automated measure. Depending on whether your goal is production or interpretation, it may either be useful to suppress or to emphasize biases in human language. Finally, I have discussed stereotyping behavior as the addition of a contextual layer on top of a more basic description. This raises the question what kind of descriptions we would like our models to produce."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1605.06083",
+    "question_id": "7561a968470a8936d10e1ba722d2f38b5a9a4d38",
+    "question": "What is the size of the dataset?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "30,000",
+      "collection of over 30,000 images with 5 crowdsourced descriptions each"
+    ],
+    "generated_answer": "The dataset contains over 30,000 images.",
+    "retrieved_chunk_ids": [
+      1,
+      3,
+      24
+    ],
+    "retrieved_contexts": [
+      "Introduction\nThe Flickr30K dataset BIBREF0 is a collection of over 30,000 images with 5 crowdsourced descriptions each. It is commonly used to train and evaluate neural network models that generate image descriptions (e.g. BIBREF2 ). An untested assumption behind the dataset is that the descriptions are based on the images, and nothing else. Here are the authors (about the Flickr8K dataset, a subset of Flickr30K):",
+      "Introduction\nWhat this assumption overlooks is the amount of interpretation or recontextualization carried out by the annotators. Let us take a concrete example. Figure FIGREF1 shows an image from the Flickr30K dataset.",
+      "Ethnicity/race\nThe numbers in Table TABREF22 are striking: there seems to be a real, systematic difference in ethnicity marking between the groups. We can take one step further and look at all the 697 pictures with the word `baby' in it. If there turn out to be disproportionately many white babies, this strengthens the conclusion that the dataset is biased."
+    ],
+    "reference_token_f1": 0.4444444444444445,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The dataset contains over 30,000 images.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1605.06083",
+    "question_id": "6d4400f45bd97b812e946b8a682b018826e841f1",
+    "question": "Which methods are considered to find examples of biases and unwarranted inferences??",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "spot patterns by just looking at a collection of images tag all descriptions with part-of-speech information I applied Louvain clustering",
+      "Looking for adjectives marking the noun \"baby\" and also looking for most-common adjectives related to certain nouns using POS-tagging"
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      6,
+      13,
+      15
+    ],
+    "retrieved_contexts": [
+      "Introduction\nThis paper aims to give an overview of linguistic bias and unwarranted inferences resulting from stereotypes and prejudices. I will build on earlier work on linguistic bias in general BIBREF3 , providing examples from the Flickr30K data, and present a taxonomy of unwarranted inferences. Finally, I will discuss several methods to analyze the data in order to detect biases.",
+      "Unwarranted inferences\nUnwarranted inferences are statements about the subject(s) of an image that go beyond what the visual data alone can tell us. They are based on additional assumptions about the world. After inspecting a subset of the Flickr30K data, I have grouped these inferences into six categories (image examples between parentheses):",
+      "Unwarranted inferences\nWe've seen an example of this in the introduction, where the `manager' was said to be talking about job performance and scolding [a worker] in a stern lecture (8063007)."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1605.06083",
+    "question_id": "26c2e1eb12143d985e4fb50543cf0d1eb4395e67",
+    "question": "What biases are found in the dataset?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Ethnic bias",
+      "adjectives are used to create “more narrow labels [or subtypes] for individuals who do not fit with general social category expectations”"
+    ],
+    "generated_answer": "The dataset shows linguistic bias and unwarranted inferences driven by stereotypes—particularly an ethnicity/race bias where the race of babies is only mentioned when they are Black or Asian, while White is treated as the unmarked default.",
+    "retrieved_chunk_ids": [
+      6,
+      22,
+      27
+    ],
+    "retrieved_contexts": [
+      "Introduction\nThis paper aims to give an overview of linguistic bias and unwarranted inferences resulting from stereotypes and prejudices. I will build on earlier work on linguistic bias in general BIBREF3 , providing examples from the Flickr30K data, and present a taxonomy of unwarranted inferences. Finally, I will discuss several methods to analyze the data in order to detect biases.",
+      "Ethnicity/race\nOne interesting pattern is that the ethnicity/race of babies doesn't seem to be mentioned unless the baby is black or asian. In other words: white seems to be the default, and others seem to be marked. How can we tell whether or not the data is actually biased?",
+      "Discussion\nIn the previous section, I have outlined several methods to manually detect stereotypes, biases, and odd phrases. Because there are many ways in which a phrase can be biased, it is difficult to automatically detect bias from the data. So how should we deal with stereotype-driven descriptions?"
+    ],
+    "reference_token_f1": 0.06779661016949153,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The dataset shows linguistic bias and unwarranted inferences driven by stereotypes.",
+        "supported": true
+      },
+      {
+        "claim": "There is an ethnicity/race bias where the race of babies is only mentioned when they are Black or Asian.",
+        "supported": true
+      },
+      {
+        "claim": "White is treated as the unmarked default, with its race not mentioned for babies.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1804.05918",
+    "question_id": "f17ca24b135f9fe6bb25dc5084b13e1637ec7744",
+    "question": "What discourse relations does it work best/worst for?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "explicit discourse relations",
+      "Best: Expansion (Exp). Worst: Comparison (Comp)."
+    ],
+    "generated_answer": "Insufficient evidence.",
+    "retrieved_chunk_ids": [
+      3,
+      1,
+      28
+    ],
+    "retrieved_contexts": [
+      "Introduction\nTo further improve implicit discourse relation prediction, we aim to improve discourse unit representations by positioning a discourse unit (DU) in its wider context of a paragraph. The key observation is that semantic meaning of a DU can not be interpreted independently from the rest of the paragraph that contains it, or independently from the overall paragraph-level discourse structure that involve the DU. Considering the following paragraph with four discourse relations, one relation between each two adjacent DUs:",
+      "Introduction\nPDTB-style discourse relations, mostly defined between two adjacent text spans (i.e., discourse units, either clauses or sentences), specify how two discourse units are logically connected (e.g., causal, contrast). Recognizing discourse relations is one crucial step in discourse analysis and can be beneficial for many downstream NLP applications such as information extraction, machine translation and natural language generation.",
+      "Fine-tune Discourse Relation Predictions Using a CRF Layer\nData analysis and many linguistic studies BIBREF11 , BIBREF33 , BIBREF34 , BIBREF35 have repeatedly shown that discourse relations feature continuity and patterns (e.g., a temporal relation is likely to be followed by another temporal relation). Especially, BIBREF11 firstly reported that patterns exist between implicit discourse relations and their neighboring explicit discourse relations."
+    ],
+    "reference_token_f1": 0.0,
+    "faithfulness_score": null,
+    "abstained": true,
+    "claims": []
+  },
+  {
+    "paper_id": "1804.05918",
+    "question_id": "bd5bd1765362c2d972a762ca12675108754aa437",
+    "question": "How much does this model improve state-of-the-art?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "the basic model yields good performance for recognizing explicit discourse relations as well, which is comparable with previous best result (92.05% macro F1-score and 93.09% accuracy as reported in BIBREF11 ). full paragraph-level neural network model achieves the best macro-average F1-score of 48.82% in predicting implicit discourse relations, which outperforms previous neural tensor network models (e.g., BIBREF18 ) by more than 2 percents and outperforms the best previous system BIBREF19 by 1 percent. Then we also created ensemble models by applying majority voting to combine results of ten runs. From table 5 , each ensemble model obtains performance improvements compared with single model. The full model achieves performance boosting of (51.84 - 48.82 = 3.02) and (94.17 - 93.21 = 0.96) in macro F1-scores for predicting implicit and explicit discourse relations respectively. ",
+      "1 percent"
+    ],
+    "generated_answer": "The ensemble model raises macro F1 by 3.02 points for implicit discourse relations and by 0.96 points for explicit discourse relations over the prior state‑of‑the‑art.",
+    "retrieved_chunk_ids": [
+      46,
+      52,
+      35
+    ],
+    "retrieved_contexts": [
+      "Evaluation Settings\nFor additional comparisons, We also report the performance of our proposed models in the binary classification setting.",
+      "Ensemble Model\nAs we explained in section 4.2, we ran our models for 10 times to obtain stable average performance. Then we also created ensemble models by applying majority voting to combine results of ten runs. From table 5 , each ensemble model obtains performance improvements compared with single model. The full model achieves performance boosting of (51.84 - 48.82 = 3.02) and (94.17 - 93.21 = 0.96) in macro F1-scores for predicting implicit and explicit discourse relations respectively. Furthermore, the ensemble model achieves the best performance for predicting both implicit and explicit discourse relations simultaneously.",
+      "Parameter Settings and Model Training\nTo alleviate the influence of randomness in neural network model training and obtain stable experimental results, we ran each of the proposed models and our own baseline models ten times and report the average performance of each model instead of the best performance as reported in many previous works."
+    ],
+    "reference_token_f1": 0.27058823529411763,
+    "faithfulness_score": 0.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The ensemble model raises macro F1 by 3.02 points for implicit discourse relations and by 0.96 points for explicit discourse relations over the prior state‑of‑the‑art.",
+        "supported": false
+      }
+    ]
+  },
+  {
+    "paper_id": "1809.04267",
+    "question_id": "d9b6c61fc6d29ad399d27b931b6cb7b1117b314a",
+    "question": "Where is a question generation model used?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "The question generation model provides each candidate answer with a score by measuring semantic relevance between the question and the generated question based on the semantics of the candidate answer. ",
+      "framework consisting of both a question answering model and a question generation model"
+    ],
+    "generated_answer": "It is employed in the framework as the component that generates a question from the semantics of a candidate answer, and it is used in the “question‑generation‑based” experiments.",
+    "retrieved_chunk_ids": [
+      27,
+      6,
+      49
+    ],
+    "retrieved_contexts": [
+      "The Question Generation Model\nIn this section, we present the generation model which generates a question based on the semantics of a candidate answer. Afterward, we introduce how our paraphrasing model, which measures the semantic relevance between the generated question and the original question, is pretrained.",
+      "Approach Overview\nOur framework consists of a question answering model and a question generation model.",
+      "Settings\nIn our experiments, we tune model parameters on the development set and report results on the test set. We design experiments from both ranking-based direction and question generation-based direction. The evaluation metric is precision @1 BIBREF17 , which indicates whether the top ranked result is the correct answer. We further report BLEU score BIBREF27 for the question generation approach."
+    ],
+    "reference_token_f1": 0.4666666666666667,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The Question Generation Model is employed in the framework as the component that generates a question from the semantics of a candidate answer.",
+        "supported": true
+      },
+      {
+        "claim": "The Question Generation Model is used in the “question‑generation‑based” experiments.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1901.05287",
+    "question_id": "d27438b11bc70e706431dda0af2b1c0b0d209f96",
+    "question": "Were any of these tasks evaluated in any previous work?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Yes",
+      "Yes"
+    ],
+    "generated_answer": "Yes. Prior work has evaluated these tasks, using uni‑directional models such as LSTMs in supervised and language‑model setups on agreement‑attractor sentences.",
+    "retrieved_chunk_ids": [
+      7,
+      4,
+      6
+    ],
+    "retrieved_contexts": [
+      "Previous setups\nBIBREF1 start with existing sentences from wikipedia that contain a present-tense verb. They feed each sentence word by word into an LSTM, stop right before the focus verb, and ask the model to predict a binary plural/singular decision (supervised setup) or compare the probability assigned by a pre-trained language model (LM) to the plural vs singular forms of the verb (LM setup). The evaluation is then performed on sentences with “agreement attractors” in which at there is at least one noun between the verb and its subject, and all of the nouns between the verb and subject are of the opposite number from the subject.",
+      "Introduction\nI adapt the evaluation protocol and stimuli of BIBREF1 , BIBREF2 and BIBREF3 to the bidirectional setting required by BERT, and evaluate the pre-trained BERT models (both the Large and the Base models). Surprisingly (at least to me), the out-of-the-box models (without any task-specific fine-tuning) perform very well on all the syntactic tasks.",
+      "Previous setups\nAll three previous work use uni-directional language-model-like models."
+    ],
+    "reference_token_f1": 0.07999999999999999,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "Prior work has evaluated these tasks.",
+        "supported": true
+      },
+      {
+        "claim": "Prior work used uni-directional models such as LSTMs.",
+        "supported": true
+      },
+      {
+        "claim": "The setups were supervised and language‑model setups.",
+        "supported": true
+      },
+      {
+        "claim": "The evaluation was on agreement‑attractor sentences.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1612.06685",
+    "question_id": "8d4ac4afbf5b14f412171729ceb5e822afcfa3f4",
+    "question": "Do they build a model to automatically detect demographic, lingustic or psycological dimensons of people?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "No",
+      "No"
+    ],
+    "generated_answer": "No. The work describes analyzing blog vocabularies and generating maps of demographic, linguistic and psycholinguistic properties, but it does not report building an automatic detection model for those dimensions.",
+    "retrieved_chunk_ids": [
+      6,
+      0,
+      11
+    ],
+    "retrieved_contexts": [
+      "Maps from Blogs\nOur dataset provides mappings between location, profile information, and language use, which we can leverage to generate maps that reflect demographic, linguistic, and psycholinguistic properties of the population represented in the dataset.",
+      "People's personality and motivations are manifest in their everyday language usage. With the emergence of social media, ample examples of such usage are procurable. In this paper, we aim to analyze the vocabulary used by close to 200,000 Blogger users in the U.S. with the purpose of geographically portraying various demographic, linguistic, and psychological dimensions at the state level. We give a description of a web-based tool for viewing maps that depict various characteristics of the social media users as derived from this large blog dataset of over two billion words.",
+      "Linguistic Maps\nAnother use of the information found in our dataset is to build linguistic maps, which reflect the geographic lexical variation across the 50 states BIBREF7 . We generate maps that represent the relative frequency by which a word occurs in the different states. Figure FIGREF3 shows sample maps created for two different words. The figure shows the map generated for one location specific word, Maui, which unsurprisingly is found predominantly in Hawaii, and a map for a more common word, lake, which has a high occurrence rate in Minnesota (Land of 10,000 Lakes) and Utah (home of the Great Salt Lake). Our demo described in Section SECREF4 , can also be used to generate maps for function words, which can be very telling regarding people's personality BIBREF8 ."
+    ],
+    "reference_token_f1": 0.06666666666666667,
+    "faithfulness_score": 0.5,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The work describes analyzing blog vocabularies and generating maps of demographic, linguistic and psycholinguistic properties.",
+        "supported": true
+      },
+      {
+        "claim": "The work does not report building an automatic detection model for those dimensions.",
+        "supported": false
+      }
+    ]
+  },
+  {
+    "paper_id": "1612.06685",
+    "question_id": "3c93894c4baf49deacc6ed2a14ef5e0f13b7d96f",
+    "question": "Which demographic dimensions of people do they obtain?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "occupation industry profile information language use gender ",
+      "density of users gender distribution"
+    ],
+    "generated_answer": "They obtain location (U.S. state) and gender (male / female).",
+    "retrieved_chunk_ids": [
+      7,
+      9,
+      6
+    ],
+    "retrieved_contexts": [
+      "People Maps\nThe first map we generate depicts the distribution of the bloggers in our dataset across the U.S. Figure FIGREF1 shows the density of users in our dataset in each of the 50 states. For instance, the densest state was found to be California with 11,701 users. The second densest is Texas, with 9,252 users, followed by New York, with 9,136. The state with the fewest bloggers is Delaware with 1,217 users. Not surprisingly, this distribution correlates well with the population of these states, with a Spearman's rank correlation INLINEFORM0 of 0.91 and a p-value INLINEFORM1 0.0001, and is very similar to the one reported in Lin and Halavais Lin04.",
+      "People Maps\nWe also generate two maps that delineate the gender distribution in the dataset. Overall, the blogging world seems to be dominated by females: out of 153,209 users who self-reported their gender, only 52,725 are men and 100,484 are women. Figures FIGREF1 and FIGREF1 show the percentage of male and female bloggers in each of the 50 states. As seen in this figure, there are more than the average number of male bloggers in states such as California and New York, whereas Utah and Idaho have a higher percentage of women bloggers.",
+      "Maps from Blogs\nOur dataset provides mappings between location, profile information, and language use, which we can leverage to generate maps that reflect demographic, linguistic, and psycholinguistic properties of the population represented in the dataset."
+    ],
+    "reference_token_f1": 0.13333333333333333,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They obtain location (U.S. state) and gender (male / female).",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1612.06685",
+    "question_id": "07d15501a599bae7eb4a9ead63e9df3d55b3dc35",
+    "question": "How do they obtain psychological dimensions of people?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "using the Meaning Extraction Method",
+      "Unanswerable"
+    ],
+    "generated_answer": "They infer people’s psychological traits from the language they use—analyzing the vocabulary of ≈200 K U.S. bloggers to map psycholinguistic properties derived from their blog text.",
+    "retrieved_chunk_ids": [
+      6,
+      0,
+      11
+    ],
+    "retrieved_contexts": [
+      "Maps from Blogs\nOur dataset provides mappings between location, profile information, and language use, which we can leverage to generate maps that reflect demographic, linguistic, and psycholinguistic properties of the population represented in the dataset.",
+      "People's personality and motivations are manifest in their everyday language usage. With the emergence of social media, ample examples of such usage are procurable. In this paper, we aim to analyze the vocabulary used by close to 200,000 Blogger users in the U.S. with the purpose of geographically portraying various demographic, linguistic, and psychological dimensions at the state level. We give a description of a web-based tool for viewing maps that depict various characteristics of the social media users as derived from this large blog dataset of over two billion words.",
+      "Linguistic Maps\nAnother use of the information found in our dataset is to build linguistic maps, which reflect the geographic lexical variation across the 50 states BIBREF7 . We generate maps that represent the relative frequency by which a word occurs in the different states. Figure FIGREF3 shows sample maps created for two different words. The figure shows the map generated for one location specific word, Maui, which unsurprisingly is found predominantly in Hawaii, and a map for a more common word, lake, which has a high occurrence rate in Minnesota (Land of 10,000 Lakes) and Utah (home of the Great Salt Lake). Our demo described in Section SECREF4 , can also be used to generate maps for function words, which can be very telling regarding people's personality BIBREF8 ."
+    ],
+    "reference_token_f1": 0.0588235294117647,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "They infer people’s psychological traits from the language they use.",
+        "supported": true
+      },
+      {
+        "claim": "They analyze the vocabulary of ≈200 K U.S. bloggers.",
+        "supported": true
+      },
+      {
+        "claim": "They map psycholinguistic properties derived from their blog text.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1912.04961",
+    "question_id": "99e78c390932594bd833be0f5c890af5c605d808",
+    "question": "What is the baseline?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "QA PGNet Multi-decoder QA PGNet with lookup table embedding",
+      "QA PGNet and Multi-decoder QA PGNet"
+    ],
+    "generated_answer": "The baselines are “Nearest Number” for Dosage extraction (select the number nearest the medication name, or ‘none’ if absent) and “Random Top‑3” for Frequency extraction (randomly pick one of the three most frequent tags: ‘none’, ‘daily’, ‘twice a day’).",
+    "retrieved_chunk_ids": [
+      32,
+      13,
+      31
+    ],
+    "retrieved_contexts": [
+      "Experiments ::: Model variations\nApart from learning-based baselines, we also create two naive baselines, one each for the Dosage and Frequency extraction tasks. For Dosage extraction, the baseline we consider is `Nearest Number', where we take the number nearest to the Medication Name as the prediction, and `none' if no number is mentioned or if the Medication Name is not detected in the input. For Frequency extraction, the baseline we consider is `Random Top-3' where we predict a random Frequency tag, from top-3 most frequent ones from our dataset - {`none', `daily', `twice a day'}.",
+      "Data\nThe summaries (#words - $\\mu = 9.7; \\sigma = 10.1$) are medically relevant and local. The MR tags are also local and are of the form {Medication Name, Dosage, Frequency}. If dosage ($\\mu = 2.0; \\sigma = 0$) or frequency ($\\mu = 2.1; \\sigma = 1.07$) information for a medication is not present in a grounded sentence, the corresponding field in the MR tag will be marked as `none'.",
+      "Experiments ::: Model variations\nWe consider QA PGNet and Multi-decoder QA PGNet with lookup table embedding as baseline models and improve on the baselines with other variations described below."
+    ],
+    "reference_token_f1": 0.0425531914893617,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The baseline for Dosage extraction is “Nearest Number”, selecting the number nearest the medication name, or ‘none’ if absent.",
+        "supported": true
+      },
+      {
+        "claim": "The baseline for Frequency extraction is “Random Top‑3”, randomly picking one of the three most frequent tags: ‘none’, ‘daily’, ‘twice a day’.",
+        "supported": true
+      }
+    ]
+  },
+  {
+    "paper_id": "1912.04961",
+    "question_id": "861187338c5ad445b9acddba8f2c7688785667b1",
+    "question": "Is the data de-identified?",
+    "method": "SEMANTIC",
+    "top_k": 3,
+    "reference_answers": [
+      "Yes",
+      "Yes"
+    ],
+    "generated_answer": "Yes. The dataset’s audio and transcripts were de‑identified by removing identifying information.",
+    "retrieved_chunk_ids": [
+      55,
+      48,
+      11
+    ],
+    "retrieved_contexts": [
+      "Acknowledgements\nWe thank: University of Pittsburgh Medical Center (UPMC), and Abridge AI Inc. for providing access to the de-identified data corpus; Dr. Shivdev Rao, a faculty member and practicing cardiologist in UPMC's Heart and Vascular Institute and Prof. Florian Metze, Associate Research Professor, Carnegie Mellon University for helpful discussions; Ben Schloss, Steven Coleman, and Deborah Osakue for data business development and annotation management.",
+      "Results and Discussion ::: Evaluating on ASR transcripts\nIn our $\\mathcal {D}_{test}$ dataset, on initial study we see a Word Error Rate of $\\sim $50% for the ASR APIs and this number is not accurate because, 1) of the de-identification, 2) disfluencies (verbatim) difference between the human written and ASR transcript, and 3) minor alignment differences between the audio and the ground truth transcript.",
+      "Data\nOur dataset consists of a total of 6,693 real doctor-patient conversations recorded in a clinical setting using distant microphones of varying quality. The recordings have an average duration of 9min 28s and have a verbatim transcript of 1,500 words on average (written by the experts). Both the audio and the transcript are de-identified (by removing the identifying information) with digital zeros and [de-identified] tags, respectively. The sentences in the transcript are grounded to the audio with the timestamps of its first and last word."
+    ],
+    "reference_token_f1": 0.13333333333333333,
+    "faithfulness_score": 1.0,
+    "abstained": false,
+    "claims": [
+      {
+        "claim": "The dataset’s audio and transcripts were de‑identified by removing identifying information.",
+        "supported": true
+      }
+    ]
+  }
+]

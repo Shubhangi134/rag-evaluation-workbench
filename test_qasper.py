@@ -231,14 +231,18 @@ def test_qasper_comparison_workflow(monkeypatch, tmp_path):
     import evaluate_qasper as qasper
 
     # Create a tiny QASPER dataset for this test.
-    paper_data = {
-        "test-paper": {
-            "title": "Test Research Paper",
+     # Create three different papers for the evaluation.
+    paper_data = {}
+    for index in range(1, 4):
+        paper_id = f"test-paper-{index}"
+
+        paper_data[paper_id] = {
+            "title": f"Test Research Paper {index}",
             "abstract": "The system uses sensing and planning.",
             "full_text": [],
             "qas": [
                 {
-                    "question_id": "question-1",
+                    "question_id": f"question-{index}",
                     "question": "What does the system use?",
                     "answers": [
                         {
@@ -253,7 +257,6 @@ def test_qasper_comparison_workflow(monkeypatch, tmp_path):
                 }
             ],
         }
-    }
 
     data_path = tmp_path / "qasper-test.json"
     data_path.write_text(
@@ -262,7 +265,7 @@ def test_qasper_comparison_workflow(monkeypatch, tmp_path):
     )
 
     monkeypatch.setattr(qasper, "DATA_PATH", data_path)
-    monkeypatch.setattr(qasper, "MAX_QUESTIONS", 1)
+    monkeypatch.setattr(qasper, "MAX_QUESTIONS", 3)
 
     # Redirect the generated JSON into pytest's temporary folder.
     monkeypatch.setattr(
@@ -340,7 +343,7 @@ def test_qasper_comparison_workflow(monkeypatch, tmp_path):
     qasper.compare_qasper_methods()
 
     # All three methods must receive the same question and top_k.
-    assert len(retrieval_calls) == 3
+    assert len(retrieval_calls) == 9
     assert {call[0] for call in retrieval_calls} == {
         "BM25",
         "TF-IDF",
@@ -361,14 +364,26 @@ def test_qasper_comparison_workflow(monkeypatch, tmp_path):
         output_path.read_text(encoding="utf-8")
     )
 
-    assert len(results) == 3
+    assert len(results) == 9
+
+# Verify that the questions come from three different papers.
+    assert len({result["paper_id"] for result in results}) == 3
+
+# Every paper must be evaluated by every retrieval method.
+    for paper_id in ("test-paper-1", "test-paper-2", "test-paper-3"):
+        methods = {
+            result["method"]
+            for result in results
+            if result["paper_id"] == paper_id
+        }
+    assert methods == {"BM25", "TF-IDF", "Semantic"}
 
     semantic_summary = qasper.summarize_qasper_results(
         results,
         "Semantic",
     )
 
-    assert semantic_summary["abstention_count"] == 1
+    assert semantic_summary["abstention_count"] == 3
     assert semantic_summary["abstention_rate"] == 1.0
     assert semantic_summary["mean_faithfulness"] is None
 
@@ -379,3 +394,100 @@ def test_qasper_comparison_workflow(monkeypatch, tmp_path):
         )
         assert summary["abstention_count"] == 0
         assert summary["mean_faithfulness"] == 1.0
+
+def test_selected_qasper_method(monkeypatch, tmp_path):
+    """Test .env-selected evaluation without calling Ollama."""
+
+    import json
+    import evaluate_qasper as qasper
+
+    paper_data = {
+        "test-paper": {
+            "title": "Test Paper",
+            "abstract": "The system uses sensing and planning.",
+            "full_text": [],
+            "qas": [
+                {
+                    "question_id": "q1",
+                    "question": "What does the system use?",
+                    "answers": [
+                        {
+                            "answer": {
+                                "unanswerable": False,
+                                "yes_no": None,
+                                "free_form_answer": "Sensing and planning.",
+                                "extractive_spans": [],
+                            }
+                        }
+                    ],
+                }
+            ],
+        }
+    }
+
+    data_path = tmp_path / "qasper-test.json"
+    data_path.write_text(
+        json.dumps(paper_data),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(qasper, "DATA_PATH", data_path)
+    monkeypatch.setattr(qasper, "MAX_QUESTIONS", 1)
+    monkeypatch.setattr(
+        qasper,
+        "__file__",
+        str(tmp_path / "evaluate_qasper.py"),
+    )
+
+    monkeypatch.setenv("QASPER_RETRIEVER", "bm25")
+    monkeypatch.setenv("QASPER_TOP_K", "3")
+    monkeypatch.setenv("QASPER_MAX_QUESTIONS", "1")
+
+    retrieval_calls = []
+
+    def fake_retrieve(query, chunks, top_k):
+        retrieval_calls.append((query, top_k))
+        return chunks[:top_k]
+
+    monkeypatch.setattr(
+        qasper,
+        "search_chunks_bm25",
+        fake_retrieve,
+    )
+
+    monkeypatch.setattr(
+        qasper,
+        "generate_qasper_answer",
+        lambda question, chunks: "Sensing and planning.",
+    )
+
+    monkeypatch.setattr(
+        qasper,
+        "evaluate_faithfulness",
+        lambda answer, chunks: {
+            "faithfulness_score": 1.0,
+            "claims": [
+                {"claim": answer, "supported": True}
+            ],
+        },
+    )
+
+    qasper.evaluate_selected_qasper_method()
+
+    assert retrieval_calls == [
+        ("What does the system use?", 3)
+    ]
+    output_path = (
+    tmp_path / "results" / "qasper_bm25_q1_results.json"
+    )
+    assert output_path.exists()
+
+    results = json.loads(
+        output_path.read_text(encoding="utf-8")
+    )
+
+    assert len(results) == 1
+    assert results[0]["method"] == "BM25"
+    assert results[0]["top_k"] == 3
+    assert results[0]["generated_answer"] == "Sensing and planning."
+    assert results[0]["abstained"] is False

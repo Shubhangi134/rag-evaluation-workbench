@@ -23,7 +23,7 @@ DATA_PATH = (
     / "qasper-dev-v0.3.json"
 )
 
-MAX_QUESTIONS = 3
+MAX_QUESTIONS = 50
 
 
 def create_paper_chunks(paper_id, paper):
@@ -453,6 +453,33 @@ def summarize_qasper_results(results, method_name):
     }
 
 
+def get_qasper_retriever():
+    """Select the QASPER retrieval method from .env."""
+
+    method = os.getenv("QASPER_RETRIEVER", "bm25").strip().lower()
+
+    strategies = {
+        "bm25": search_chunks_bm25,
+        "tfidf": search_chunks_tfidf,
+        "semantic": search_chunks_semantic,
+    }
+
+    if method not in strategies:
+        raise ValueError(
+            f"Invalid QASPER_RETRIEVER: {method}. "
+            "Choose bm25, tfidf, or semantic."
+        )
+
+    top_k = int(os.getenv("QASPER_TOP_K", "3"))
+
+    if top_k != 3:
+        raise ValueError(
+            "QASPER_TOP_K must be 3 for our fair comparison."
+        )
+
+    return method, strategies[method], top_k
+
+
 def compare_qasper_methods():
     """Compare three retrieval methods on QASPER questions."""
 
@@ -541,13 +568,6 @@ def compare_qasper_methods():
                 else:
                     print(f"    Faithfulness: {faithfulness_score:.4f}")
 
-
-            if question_count >= MAX_QUESTIONS:
-                break
-
-        if question_count >= MAX_QUESTIONS:
-            break
-
     # Save individual answers and evaluation results.
     output_path = (
         Path(__file__).resolve().parent
@@ -587,6 +607,239 @@ def compare_qasper_methods():
         print(f"Abstentions: {summary['abstention_count']}")
         print(f"Abstention Rate: {summary['abstention_rate']:.2%}")
 
+
+    print(f"\nResults saved to: {output_path}")
+
+
+
+def evaluate_selected_qasper_method():
+    """Evaluate the same 50 QASPER questions using one retriever."""
+
+    method, retrieve, top_k = get_qasper_retriever()
+
+    # Fixed benchmark size for all retrieval methods.
+    # Default to 50 questions for the real benchmark.
+# Automated tests can override this setting.
+    question_limit = int(os.getenv("QASPER_MAX_QUESTIONS", "50"))
+
+    if question_limit < 1:
+        raise ValueError("QASPER_MAX_QUESTIONS must be at least 1.")
+
+    with DATA_PATH.open("r", encoding="utf-8") as file:
+        papers = json.load(file)
+
+    # Select the same questions, in the same order,
+    # regardless of which retrieval method is used.
+    selected_questions = []
+
+    for paper_id, paper in papers.items():
+        for qa in paper.get("qas", []):
+            references = [
+                get_reference_answer(annotation["answer"])
+                for annotation in qa.get("answers", [])
+            ]
+
+            references = [ref for ref in references if ref]
+
+            if not references:
+                continue
+
+            selected_questions.append(
+                (paper_id, paper, qa, references)
+            )
+
+            if len(selected_questions) == question_limit:
+                break
+
+        if len(selected_questions) == question_limit:
+            break
+
+    if len(selected_questions) != question_limit:
+        raise ValueError(
+            f"Expected {question_limit} eligible questions, "
+            f"but found {len(selected_questions)}."
+        )
+
+    # Use a new filename to preserve earlier experiments.
+    output_path = (
+        Path(__file__).resolve().parent
+        / "results"
+        / f"qasper_{method}_q{question_limit}_results.json"
+    )
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if output_path.exists():
+        with output_path.open("r", encoding="utf-8") as file:
+            results = json.load(file)
+
+        if not isinstance(results, list):
+            raise ValueError("Results file must contain a list.")
+    else:
+        results = []
+
+    # Make sure we do not mix incompatible runs.
+    expected_keys = {
+        (paper_id, qa["question_id"])
+        for paper_id, paper, qa, refs in selected_questions
+    }
+
+    completed_questions = set()
+
+    for result in results:
+        key = (result["paper_id"], result["question_id"])
+
+        if (
+            key not in expected_keys
+            or result.get("method") != method.upper()
+            or result.get("top_k") != top_k
+        ):
+            raise ValueError(
+                "Existing results do not match this benchmark. "
+                "Check the saved file before continuing."
+            )
+
+        if key in completed_questions:
+            raise ValueError(
+                f"Duplicate result detected: {key}"
+            )
+
+        completed_questions.add(key)
+
+    print(f"\nQASPER Evaluation: {method.upper()}")
+    print(f"Questions selected: {question_limit}")
+    print(f"Previously completed: {len(completed_questions)}")
+    print(f"Top K: {top_k}")
+    print("-" * 50)
+
+    # Reuse chunks when consecutive questions belong
+    # to the same research paper.
+    current_paper_id = None
+    chunks = []
+
+    for index, (paper_id, paper, qa, references) in enumerate(
+        selected_questions,
+        start=1,
+    ):
+        question_key = (paper_id, qa["question_id"])
+
+        if question_key in completed_questions:
+            continue
+
+        if paper_id != current_paper_id:
+            chunks = create_paper_chunks(paper_id, paper)
+            current_paper_id = paper_id
+
+        question = qa["question"]
+
+        print(f"\nQuestion {index}/{question_limit}: {question}")
+
+        retrieved = retrieve(
+            question,
+            chunks,
+            top_k=top_k,
+        )
+
+        answer = generate_qasper_answer(
+            question,
+            retrieved,
+        )
+
+        token_f1 = best_reference_f1(
+            answer,
+            references,
+        )
+
+        faithfulness = evaluate_faithfulness(
+            answer,
+            retrieved,
+        )
+
+        abstained = (
+            answer.strip().lower() == "insufficient evidence."
+        )
+
+        result = {
+            "paper_id": paper_id,
+            "question_id": qa["question_id"],
+            "question": question,
+            "method": method.upper(),
+            "top_k": top_k,
+            "reference_answers": references,
+            "generated_answer": answer,
+            "retrieved_chunk_ids": [
+                chunk.chunk_index for chunk in retrieved
+            ],
+            "retrieved_contexts": [
+                chunk.text for chunk in retrieved
+            ],
+            "reference_token_f1": token_f1,
+            "faithfulness_score": faithfulness[
+                "faithfulness_score"
+            ],
+            "abstained": abstained,
+            "claims": faithfulness["claims"],
+        }
+
+        results.append(result)
+
+        # Save safely after every completed question.
+        temporary_path = output_path.with_suffix(".tmp")
+
+        with temporary_path.open("w", encoding="utf-8") as file:
+            json.dump(
+                results,
+                file,
+                indent=2,
+                ensure_ascii=False,
+            )
+
+        os.replace(temporary_path, output_path)
+        completed_questions.add(question_key)
+
+        print(f"  Token F1: {token_f1:.4f}")
+
+        score = faithfulness["faithfulness_score"]
+
+        if score is None:
+            print("  Faithfulness: N/A (abstained)")
+        else:
+            print(f"  Faithfulness: {score:.4f}")
+
+        print(f"  Saved: {len(results)}/{question_limit}")
+
+    summary = summarize_qasper_results(
+        results,
+        method.upper(),
+    )
+
+    if summary is not None:
+        print("\nQASPER Evaluation Summary")
+        print("-" * 50)
+        print(f"Method: {method.upper()}")
+        print(f"Questions: {summary['question_count']}")
+        print(
+            f"Mean Token F1: "
+            f"{summary['mean_token_f1']:.4f}"
+        )
+
+        mean_faithfulness = summary["mean_faithfulness"]
+
+        if mean_faithfulness is None:
+            print("Mean Faithfulness: N/A")
+        else:
+            print(
+                f"Mean Faithfulness: "
+                f"{mean_faithfulness:.4f}"
+            )
+
+        print(
+            f"Abstentions: {summary['abstention_count']}"
+        )
+        print(
+            f"Abstention Rate: "
+            f"{summary['abstention_rate']:.2%}"
+        )
 
     print(f"\nResults saved to: {output_path}")
 

@@ -13,15 +13,16 @@ The application includes a read-only Evaluation panel displaying the recorded be
 
 ---
 
+
 ## Application Screenshots
 
 ### Chatbot Interface
 
-![RAG Chat Bot - Empty State](screenshots/chatbot-img1.png)
+![RAG Chat Bot - Empty State](screenshots/img1.png)
 
 ### PDF Question Answering
 
-![RAG Chat Bot - PDF Question Answering](screenshots/chatbot-img2.png)
+![RAG Chat Bot - PDF Question Answering](screenshots/img2.png)
 
 
 ## Features

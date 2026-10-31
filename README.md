@@ -13,6 +13,17 @@ The application includes a read-only Evaluation panel displaying the recorded be
 
 ---
 
+## Application Screenshots
+
+### Chatbot Interface
+
+![RAG Chat Bot - Empty State](screenshots/chatbot-empty.png)
+
+### PDF Question Answering
+
+![RAG Chat Bot - PDF Question Answering](screenshots/chatbot-qa.png)
+
+
 ## Features
 
 - **PDF Question Answering:** Upload PDFs and ask questions about their contents.
